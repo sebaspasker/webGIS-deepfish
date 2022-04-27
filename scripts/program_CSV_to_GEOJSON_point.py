@@ -1,7 +1,7 @@
 import csv, json
 from geojson import Feature, FeatureCollection, Point
-path = r'/home/sebas_pasker/Documents/Trabajo_Investigacion/Deepfish2/cuadro_mando/project/webGIS/project/'
-file_name = r'random_route_Alicante.csv'
+path = r'/home/sebas_pasker/Documents/Trabajo_Investigacion/Deepfish2/cuadro_mando/project/webGIS/deepfish-webgis/'
+file_name = r'AIS_trace_route.csv'
 
 features = []
 with open(path + "csv/" + file_name, newline='') as csvfile:
@@ -25,12 +25,6 @@ with open(path + "csv/" + file_name, newline='') as csvfile:
                     'VesselName': r[7],
                     'CallSign': r[8],
                     'VesselType': r[9],
-                    'Status': r[10],
-                    'Length': r[11],
-                    'Width': r[12],
-                    'Cargo': r[13],
-                    'TransceiverClass': r[14],
-                    'Weight': r[15],
                 }
             )
         )

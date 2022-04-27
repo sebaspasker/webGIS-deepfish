@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+  {% load static %} 
+  <head>
+    <meta charset="utf-8" />
+    <title>Route map in mapbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <style>
+			body { margin: 0; padding: 0; }
+			#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      mapboxgl.accessToken =
+        'pk.eyJ1IjoibWFsLXdvb2QiLCJhIjoiY2oyZ2t2em50MDAyMzJ3cnltMDFhb2NzdiJ9.X-D4Wvo5E5QxeP7K_I3O8w';
+			const map = new mapboxgl.Map({
+				container: 'map',
+				style: 'mapbox://styles/mapbox/streets-v11',
+				center: [-0.4801385175102711, 38.32622186697402],
+				zoom: 15
+			});
+
+map.on('load', () => {
+				map.addSource('route', {
+								'type' : 'geojson',
+								'data' : "{% static 'webgisapp/AIS_trace_route.csv.geojson' %}"
+							});
+							map.addLayer({
+								'id': 'route',
+								'type': 'line',
+								'source': 'route',
+								'layout': {
+								'line-join': 'round',
+								'line-cap': 'round'
+								},
+								'paint': {
+								'line-color': '#888',
+								'line-width': 8
+								}
+							});
+						});
+    </script>
+  </body>
+</html>

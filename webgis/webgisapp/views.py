@@ -6,3 +6,7 @@ from django.template import loader
 def index(request):
     return render(request, 'webgisapp/index.html')
 
+def maproute(request):
+    return render(request, 'webgisapp/maproute.html')
+    
+

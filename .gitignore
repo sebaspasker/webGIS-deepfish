@@ -325,3 +325,7 @@ json/*
 csv/*
 
 ideas_y_notas.txt
+
+*.csv
+*.geojson
+*.json
