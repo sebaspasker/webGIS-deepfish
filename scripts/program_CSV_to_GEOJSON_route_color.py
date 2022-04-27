@@ -3,6 +3,12 @@ from geojson import Feature, FeatureCollection, Point, LineString
 path = r'/home/sebas_pasker/Documents/Trabajo_Investigacion/Deepfish2/cuadro_mando/project/webGIS/deepfish-webgis/'
 file_name = r'AIS_trace_route.csv'
 
+colors = [
+    "#59ff00",
+    "#ff4d00",
+    "#e62980",
+    "#ffffff"
+]
 features = []
 MMSI_L = []
 MMSI_D = []
@@ -42,6 +48,7 @@ for D in MMSI_D:
                 'VesselType' : D['VesselType'],
                 'Length' : D['Length'],
                 'Width' : D['Width'],
+                'color' : colors[MMSI_D.index(D)]
             }
         )
     )

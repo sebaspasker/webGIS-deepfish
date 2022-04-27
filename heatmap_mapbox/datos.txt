@@ -1,6 +1,0 @@
-Heatmap layer
-	heatmap-weight
-	heatmap-intensity
-	heatmap-color
-	heatmap-radius
-	heatmap-opacity
