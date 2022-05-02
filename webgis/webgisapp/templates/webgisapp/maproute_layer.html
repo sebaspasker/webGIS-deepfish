@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
 <meta charset="utf-8">
@@ -54,75 +55,102 @@ body { margin: 0; padding: 0; }
     #menu a.active:hover {
         background: #3074a4;
     }
-</style>
-
-<nav id="menu"></nav>
+</style> <nav id="menu"></nav>
 <div id="map"></div>
 
 <script>
-	mapboxgl.accessToken = 'pk.eyJ1IjoibWFsLXdvb2QiLCJhIjoiY2oyZ2t2em50MDAyMzJ3cnltMDFhb2NzdiJ9.X-D4Wvo5E5QxeP7K_I3O8w';
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZXNzZWRlcGUiLCJhIjoiY2wxbmVrcGtpMDl2bTNrbzF3ajYxdzc2biJ9.vPfgY7bUBFnO2-NCJ96IEA';
     const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         zoom: 15,
-        center: [-0.4775206817886142, 38.32554852842037]
+				center: [-0.4801385175102711, 38.32622186697402],
     });
 
     // Wait until the map has finished loading.
     map.on('load', () => {
-        map.addSource('vessels', {
-            type: 'geojson',
-						url: "{% static 'webgisapp/AIS_trace_route.csv,geojson'}"
-        });
-        map.addLayer({
-            'id': 'vessels',
-            'type': 'circle',
-            'source': 'vessels',
-            'layout': {
-                // Make the layer visible by default.
-                'visibility': 'visible'
-            },
-            'paint': {
-                'circle-radius': 8,
-                'circle-color': 'rgba(55,148,179,1)'
-            },
-            'source-layer': 'museum-cusco'
-        });
+        // Add a custom vector tileset source. This tileset contains
+        // point features representing museums. Each feature contains
+        // three properties. For example:
+        // {
+        //     alt_name: "Museo Arqueologico",
+        //     name: "Museo Inka",
+        //     tourism: "museum"
+        // }
+				map.addSource('route', {
+					'type' : 'geojson',
+					'data' : "{% static 'webgisapp/AIS_trace_route.csv.geojson' %}"
+				});
+				map.addLayer({
+					'id': 'route',
+					'type': 'line',
+					'source': 'route',
+					'layout': {
+						'line-join': 'round',
+						'line-cap': 'butt',
+					},
+					'paint': {
+						'line-color': ['get', 'color'],
+						'line-width': 3
+					}
+				});
 
         // Add the Mapbox Terrain v2 vector tileset. Read more about
         // the structure of data in this tileset in the documentation:
         // https://docs.mapbox.com/vector-tiles/reference/mapbox-terrain-v2/
-        map.addSource('contours', {
-            type: 'vector',
-            url: 'mapbox://mapbox.mapbox-terrain-v2'
-        });
-        map.addLayer({
-            'id': 'contours',
-            'type': 'line',
-            'source': 'contours',
-            'source-layer': 'contour',
-            'layout': {
-                // Make the layer visible by default.
-                'visibility': 'visible',
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
+        map.addLayer(
+          {
+            'id': 'vessels-point',
+            'type': 'circle',
+            'source': 'route',
             'paint': {
-                'line-color': '#877b59',
-                'line-width': 1
+              // increase the radius of the circle as the zoom level and dbh value increases
+              'circle-radius': {
+                'property': 'Weight',
+                'type': 'exponential',
+                'stops': [
+                  [{ zoom: 15, value: 1 }, 5],
+                  [{ zoom: 15, value: 62 }, 10],
+                  [{ zoom: 22, value: 1 }, 20],
+                  [{ zoom: 22, value: 62 }, 50]
+                ]
+              },
+              'circle-color': {
+                'property': 'Weight',
+                'type': 'exponential',
+                'stops': [
+                  [0, 'rgba(236,222,239,0)'],
+                  [10, 'rgb(236,222,239)'],
+                  [20, 'rgb(208,209,230)'],
+                  [30, 'rgb(166,189,219)'],
+                  [40, 'rgb(103,169,207)'],
+                  [50, 'rgb(28,144,153)'],
+                  [60, 'rgb(1,108,89)']
+                ]
+              },
+              'circle-stroke-color': 'white',
+              'circle-stroke-width': 1,
+              'circle-opacity': {
+                'stops': [
+                  [14, 0],
+                  [15, 1]
+                ]
+              }
             }
-        });
+          },
+          'waterway-label'
+        );
     });
 
     // After the last frame rendered before the map enters an "idle" state.
     map.on('idle', () => {
         // If these two layers were not added to the map, abort
-        if (!map.getLayer('contours') || !map.getLayer('museums')) {
+        if (!map.getLayer('route') || !map.getLayer('vessels-point')) {
             return;
         }
 
         // Enumerate ids of the layers.
-        const toggleableLayerIds = ['contours', 'museums'];
+        const toggleableLayerIds = ['route', 'vessels-point'];
 
         // Set up the corresponding toggle button for each layer.
         for (const id of toggleableLayerIds) {
