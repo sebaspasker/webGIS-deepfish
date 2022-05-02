@@ -98,11 +98,15 @@ body { margin: 0; padding: 0; }
         // Add the Mapbox Terrain v2 vector tileset. Read more about
         // the structure of data in this tileset in the documentation:
         // https://docs.mapbox.com/vector-tiles/reference/mapbox-terrain-v2/
+				map.addSource('vessels', {
+					'type' : 'geojson',
+					'data' : "{% static 'webgisapp/AIS_trace_route_p.csv.geojson' %}"
+				});
         map.addLayer(
           {
             'id': 'vessels-point',
             'type': 'circle',
-            'source': 'route',
+            'source': 'vessels',
             'paint': {
               // increase the radius of the circle as the zoom level and dbh value increases
               'circle-radius': {
@@ -195,6 +199,24 @@ body { margin: 0; padding: 0; }
             layers.appendChild(link);
         }
     });
+
+	map.on('click', (event) => {
+			const features = map.queryRenderedFeatures(event.point, {
+					layers: ['vessels-point']
+				});
+			if(!features.length) {
+					return;
+				}
+			const feature = features[0];
+			const popup = new mapboxgl.Popup({ offset: [0, -15] })
+				.setLngLat(feature.geometry.coordinates)
+				.setHTML(
+					   `<h3 align=center>${feature.properties.MMSI}</h3>
+							<p align=center>${feature.geometry.coordinates}</p>`
+					)
+				.addTo(map);
+		})
+
 </script>
 
 </body>
