@@ -20,3 +20,5 @@ class AISVessel(models.Model):
     Width = models.IntegerField(null=True)
     Cargo = models.IntegerField(null=True)
     TransceiverClass = models.CharField(max_length=1, null=True)
+    def to_string(self):
+        return "MMSI: " + str(self.MMSI.MMSI) + " Vessel Name: " + self.VesselName
