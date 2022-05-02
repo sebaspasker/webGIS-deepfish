@@ -37,12 +37,12 @@ map.on('load', () => {
 								'type': 'line',
 								'source': 'route',
 								'layout': {
-								'line-join': 'round',
-								'line-cap': 'round'
+									'line-join': 'round',
+									'line-cap': 'butt',
 								},
 								'paint': {
-								'line-color': ['get', 'color'],
-								'line-width': 3
+									'line-color': ['get', 'color'],
+									'line-width': 3
 								}
 							});
 						});

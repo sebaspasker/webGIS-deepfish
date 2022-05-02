@@ -9,4 +9,6 @@ def index(request):
 def maproute(request):
     return render(request, 'webgisapp/maproute.html')
     
+def maproutelayer(request):
+    return render(request, 'webgisapp/maproute_layer.html')
 
