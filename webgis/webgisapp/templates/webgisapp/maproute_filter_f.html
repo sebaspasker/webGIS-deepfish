@@ -14,6 +14,26 @@
 </head>
 <body>
 <style>
+		.filter-ctrl {
+			position: absolute;
+			top: 10px;
+			right: 150px;
+			z-index: 1;
+		}	
+
+		.filter-ctrl input[type='text'] {
+			font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+			width: 100%;
+			border: 0;
+			background-color: #fff;
+			margin: 0;
+			color: rgba(0,0,0,0 0.5);
+			padding: 10px;
+			box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+			border-radius: 3px;
+			width: 100px;
+		}
+
     #menu {
         background: #fff;
         position: absolute;
@@ -58,7 +78,13 @@
 </style> 
 	<nav id="menu"></nav>
 	<div id="map"></div>
+	<div class="filter-ctrl">
+		<input id="filter-input" type="text"
+			 name="filter" placeholder="Filter">
+	</div>
 <script>
+	<!-- const layerIDs = [] -->
+	<!-- const filterInput = document.getElementById('filter-input'); -->
 	mapboxgl.accessToken = 'pk.eyJ1IjoiZXNzZWRlcGUiLCJhIjoiY2wxbmVrcGtpMDl2bTNrbzF3ajYxdzc2biJ9.vPfgY7bUBFnO2-NCJ96IEA';
     const map = new mapboxgl.Map({
         container: 'map',
@@ -67,7 +93,16 @@
 				center: [-0.4801385175102711, 38.32622186697402],
     });
 
+    // Wait until the map has finished loading.
     map.on('load', () => {
+        // Add a custom vector tileset source. This tileset contains
+        // point features representing museums. Each feature contains
+        // three properties. For example:
+        // {
+        //     alt_name: "Museo Arqueologico",
+        //     name: "Museo Inka",
+        //     tourism: "museum"
+        // }
 				map.addSource('route', {
 					'type' : 'geojson',
 					'data' : "{% static 'webgisapp/AIS_trace_route.csv.geojson' %}"
@@ -86,6 +121,9 @@
 					}
 				});
 
+        // Add the Mapbox Terrain v2 vector tileset. Read more about
+        // the structure of data in this tileset in the documentation:
+        // https://docs.mapbox.com/vector-tiles/reference/mapbox-terrain-v2/
 				map.addSource('vessels', {
 					'type' : 'geojson',
 					'data' : "{% static 'webgisapp/AIS_trace_route_p.csv.geojson' %}"

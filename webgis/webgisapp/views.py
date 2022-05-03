@@ -25,3 +25,5 @@ def search(request):
     else:
         return render(request, 'webgisapp/form.html')
 
+def maproutefilter(request):
+    return render(request, 'webgisapp/maproute_filter.html')
