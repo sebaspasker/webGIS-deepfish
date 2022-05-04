@@ -43,7 +43,7 @@ class Fish_Plate(models.Model):
     Peso = models.IntegerField(null=True)
 
 # Relation to easy search
-class Salidas(models.Model):
+class Travels(models.Model):
     Vessel_fk = models.ForeignKey(Vessel, on_delete=models.CASCADE)
     AIS_fk = models.ForeignKey(AISVessel, on_delete=models.CASCADE)
     Plate_fk = models.ForeignKey(Plate, on_delete=models.CASCADE)
