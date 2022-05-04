@@ -7,7 +7,7 @@ class Vessel(models.Model):
 class AISVessel(models.Model):
     id = models.BigAutoField(primary_key=True)
     MMSI = models.ForeignKey(Vessel, on_delete=models.CASCADE)
-    BaseDateTime = models.DateField()
+    BaseDateTime = models.DateTimeField()
     LAT = models.FloatField()
     LON = models.FloatField()
     SOG = models.FloatField()
