@@ -5,12 +5,6 @@ from datetime import datetime
 from webgisapp.models import AISVessel
 from webgisapp.models import Vessel
 
-ALREDY_LOADED_ERROR_MESSAGE = """
-If you need to reload the child data from the CSV file,
-first delete the db.sqlite3 file to destroy the database.
-Then, run `python manage.py migrate` for a new empty
-database with tables"""
-
 class Command(BaseCommand):
     help = "Loads data from data.csv"
 
