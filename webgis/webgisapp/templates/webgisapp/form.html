@@ -1,10 +1,16 @@
-<form method="POST" action="/webgisapp/search/">
-{% csrf_token %}
-<input type="text" name="textfield">
-<input type="date" id="initdate" name="initdate">
-<input type="date" id="enddate" name="enddate">
-<!-- <input type="text" id="talla" name="talla"> -->
-<!-- <input type="text" id="pez" name="pez"> -->
-
-<button type="submit">Upload text</button>
-</form>
+<!DOCTYPE html>
+<html lang="es">
+	{% load static %}
+  <head>
+    <meta charset="utf-8" />
+    <title>Heat map in mapbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+		<form method="POST" action="/webgisapp/search/">
+		{% csrf_token %}
+		{{ form }}
+		<button type="submit">Upload text</button>
+		</form>
+  </body>
+</html>

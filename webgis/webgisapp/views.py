@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.template import loader
 from webgisapp.models import AISVessel, Vessel
 from django.db.models import Q
+from .forms import SearchForm
 
 
 def index(request):
@@ -14,19 +15,20 @@ def maproute(request):
 def maproutelayer(request):
     return render(request, 'webgisapp/maproute_layer.html')
 
-### TODO
 def search(request):
     if request.method == 'POST':
-        search_id = request.POST.get('textfield', None)
-        try:
-            vessel = Vessel.objects.filter(VesselName__contains=search_id)
-            ais = AISVessel.objects.filter(MMSI = vessel.first())
-            print(ais)
-            return render(request, 'webgisapp/route_search.html', {'ais' : ais})
-        except AISVessel.DoesNotExist:
-            return HttpResponse("No such vessel")
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            mmsi = form.cleaned_data['MMSI']
+            try:
+                v = Vessel.objects.get(MMSI__contains=mmsi)
+                ais = AISVessel.objects.filter(MMSI=v)
+                return HttpResponse("<h4> Encontrado " + ais[0].to_string() + ais[1].to_string() +  "</h4>") 
+            except Exception as e:
+                raise e
     else:
-        return render(request, 'webgisapp/form.html')
+        form = SearchForm()
+        return render(request, 'webgisapp/form.html', {'form' : form})
 
 def maproutefilter(request):
     return render(request, 'webgisapp/maproute_filter.html')
