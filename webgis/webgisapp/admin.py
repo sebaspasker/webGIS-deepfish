@@ -5,6 +5,7 @@ admin.site.register(AISVessel)
 admin.site.register(Vessel)
 admin.site.register(Plate)
 admin.site.register(Fish_Plate)
-admin.site.register(Travels)
+admin.site.register(Travel)
+admin.site.register(Fish)
 
 

@@ -329,3 +329,6 @@ ideas_y_notas.txt
 *.csv
 *.geojson
 *.json
+
+webgis/data/*
+data/*
