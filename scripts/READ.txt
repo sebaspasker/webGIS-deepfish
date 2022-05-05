@@ -1,0 +1,1 @@
+Ajustar el path de los script a los archivos origen (data/fld/origen) y destino (data/fld/destino)
