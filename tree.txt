@@ -1,0 +1,84 @@
+.
+├── dependecies.txt - Dependencias 
+├── install.bash - Instalación de dependencias
+├── README.md
+├── tree.txt -- Este DOC
+├── documentos_asociados 
+│   --------------------------------
+│   Diagramas de la Base de Datos, la infraestructura del webGIS, y
+│  	los Mockups en formato HTML 
+│   --------------------------------
+│   ├── BBDD_Final.drawio
+│   ├── Estructura_elegida.drawio
+│   └── Mockups
+├── scripts
+│   --------------------------------
+│  	Scripts de automatización de representación y extracción de datos, creación de datos aleatorios
+│  	y traspaso de un tipo de datos a otro	
+│  	Representación con plotly, csv a geojson y creador de puntos aleatorios en un cuadrado geográfico	
+│   --------------------------------
+│   ├── program_AIS_heat.py
+│   ├── program_AIS_position.py
+│   ├── program_CSV_to_GEOJSON_point.py
+│   ├── program_CSV_to_GEOJSON_route_color.py
+│   ├── program_CSV_to_GEOJSON_route.py
+│   ├── program_random_AIS_generator.py
+│   └── READ.txt
+└── webgis
+    --------------------------------
+   	Carpeta Django del WebGIS
+    --------------------------------
+    ├── data
+    ├── db.sqlite3 
+    ├── manage.py
+    ├── webgis/ - Configuración global del programa
+    └── webgisapp
+        ├── admin.py
+        ├── apps.py
+        ├── forms.py
+        ├── __init__.py
+        ├── management
+        │   └── commands
+				│   --------------------------------
+				│  	Comandos ejecutables desde el entorno	
+				│  	Importación de datos csv y raw a SQL, y generadores aleatorios de datos
+				│  	Ejecución: python manage.py <command> <params>	
+				│   --------------------------------
+        │       ├── import_csv.py
+        │       ├── import_raw_fish.py
+        │       ├── random_ais_generator.py
+        │       ├── random_fish_plate_generator.py
+        │       ├── random_plate_generator.py
+        │       └── random_vessel_generator.py
+        ├── migrations
+        ├── models.py
+        ├── static
+        │   ├── css
+        │   ├── javascript
+        │   └── webgisapp
+        ├── templates
+        │   └── webgisapp
+        │       ├── detail.html
+        │       ├── form.html
+        │       ├── index.html
+        │       ├── maproute_filter_f.html
+        │       ├── maproute_filter.html
+        │       ├── maproute.html
+        │       ├── maproute_layer.html
+        │       ├── maproute_search.html
+        │       ├── master.html
+        │       ├── realtime_route.html
+        │       ├── route_search.html
+        │       └── search.html
+        ├── tests.py
+        ├── trees.geojson
+        ├── urls.py
+        ├── utils
+				│   --------------------------------
+				│   Utilidades como: Generador de info QuerySets de AIS y Vessels 
+				│   a GEOJson Feature Collections en formato Line
+				│   --------------------------------
+        │   ├── ais_to_geojson.py
+        └── views.py
+
+52 directories, 271 files
