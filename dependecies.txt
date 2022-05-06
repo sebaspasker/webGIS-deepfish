@@ -1,6 +1,6 @@
 django
 pandas
 plotly
-random
 names
 matplotlib
+geojson
