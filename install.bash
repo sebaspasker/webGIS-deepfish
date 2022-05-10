@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pip_exists=$(ls /bin/ /usr/bin/ | grep '^pipaa$' | wc -l)
+pip_exists=$(ls /bin/ /usr/bin/ | grep '^pip$' | wc -l)
 
 if (( $pip_exists == 0 )); then
 	echo "Pip probably don't exist. Continue?(y/n)"
