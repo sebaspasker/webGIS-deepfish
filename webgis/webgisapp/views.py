@@ -25,19 +25,23 @@ def search(request):
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if form.is_valid():
+            # Recogemos información del form
             mmsi = form.cleaned_data['MMSI']
             date_from = form.cleaned_data['init_date']
             date_to = form.cleaned_data['end_date']
             talla = form.cleaned_data['talla']
             pez = form.cleaned_data['pez']
             try:
+                # Hacemos busquedad
                 v, ais = Filter_Route(mmsi, date_from, date_to, talla, pez)
-                # v = Vessel.objects.filter(MMSI__contains=mmsi)
-                # ais = AISVessel.objects.filter(MMSI__in=v, BaseDateTime__range=(date_from, date_to))
+                # Pasamos a GEOJson
                 collection = AISQuery_To_LineStringCollection(v, ais)
                 return render(request, 'webgisapp/maproute_search.html', {'collection' : collection})
             except Exception as e:
                 raise e
+        else:
+            # TOOD poner error
+            pass
     else:
         form = SearchForm()
         return render(request, 'webgisapp/form.html', {'form' : form})
