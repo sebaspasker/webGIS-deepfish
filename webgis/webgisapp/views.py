@@ -31,9 +31,9 @@ def search(request):
             talla = form.cleaned_data['talla']
             pez = form.cleaned_data['pez']
             try:
-                # v, ais = Filter_Route(mmsi, date_from, date_to, talla, pez)
-                v = Vessel.objects.filter(MMSI__contains=mmsi)
-                ais = AISVessel.objects.filter(MMSI__in=v, BaseDateTime__range=(date_from, date_to))
+                v, ais = Filter_Route(mmsi, date_from, date_to, talla, pez)
+                # v = Vessel.objects.filter(MMSI__contains=mmsi)
+                # ais = AISVessel.objects.filter(MMSI__in=v, BaseDateTime__range=(date_from, date_to))
                 collection = AISQuery_To_LineStringCollection(v, ais)
                 return render(request, 'webgisapp/maproute_search.html', {'collection' : collection})
             except Exception as e:
