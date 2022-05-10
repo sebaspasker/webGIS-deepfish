@@ -10,7 +10,7 @@ class Vessel(models.Model):
 
 
 class AISVessel(models.Model):
-    MMSI = models.ForeignKey(Vessel, on_delete=models.CASCADE, to_field="MMSI")
+    MMSI = models.ForeignKey(Vessel, on_delete=models.CASCADE, to_field="MMSI", related_name="MMSIOf")
     BaseDateTime = models.DateTimeField()
     LAT = models.FloatField()
     LON = models.FloatField()
@@ -30,7 +30,7 @@ class AISVessel(models.Model):
 
 class Plate(models.Model):
     Lote = models.CharField(max_length=15, null=False, primary_key=True)
-    Matricula = models.ForeignKey(Vessel, on_delete=models.CASCADE, to_field="Matricula") 
+    Matricula = models.ForeignKey(Vessel, on_delete=models.CASCADE, to_field="Matricula", related_name="MatriculaOf") 
     Puerto = models.CharField(max_length=30, null=True)
     Zona_Captura = models.CharField(max_length=7, null=True)
     Fecha_Inicio = models.DateTimeField()
@@ -44,7 +44,7 @@ class Fish(models.Model):
 
 # Fish analysis in each plate
 class Fish_Plate(models.Model):
-    Lote = models.ForeignKey(Plate, on_delete=models.CASCADE, to_field="Lote")
+    Lote = models.ForeignKey(Plate, on_delete=models.CASCADE, to_field="Lote", related_name="LoteOf")
     Nombre_Cientifico = models.ForeignKey(Fish, on_delete=models.CASCADE, to_field="Nombre_Cientifico")
     Talla_cm = models.IntegerField()
     Cantidad = models.IntegerField()

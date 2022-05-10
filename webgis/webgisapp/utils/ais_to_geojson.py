@@ -26,4 +26,3 @@ def AISQuery_To_LineStringCollection(Vessels, AISQuery):
             )
     return FeatureCollection(features)
 
-print(help(AISQuery_To_LineStringCollection))

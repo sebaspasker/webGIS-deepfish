@@ -14,9 +14,9 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('n', type=int, help="Number of ais")
         parser.add_argument('MAX_LAT', type=float, help="Max Latitude")
-        parser.add_argument('MIN_LAT', type=float, help="Min Latitude")
-        parser.add_argument('MAX_LON', type=float, help="Max Longitude")
-        parser.add_argument('MIN_LON', type=float, help="Min Longitude")
+        parser.add_argument('MIN_LON', type=float, help="Min Latitude")
+        parser.add_argument('MIN_LAT', type=float, help="Max Longitude")
+        parser.add_argument('MAX_LON', type=float, help="Min Longitude")
 
     def handle(self, *args, **options):
         all_v = Vessel.objects.all()

@@ -1,9 +1,11 @@
+from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from .forms import SearchForm
 from geojson import FeatureCollection
 from webgisapp.models import AISVessel, Vessel
 from webgisapp.utils.ais_to_geojson import AISQuery_To_LineStringCollection
+from webgisapp.utils.filter import Filter_Route
 
 
 # Mapa de calor 
@@ -24,9 +26,14 @@ def search(request):
         form = SearchForm(request.POST)
         if form.is_valid():
             mmsi = form.cleaned_data['MMSI']
+            date_from = form.cleaned_data['init_date']
+            date_to = form.cleaned_data['end_date']
+            talla = form.cleaned_data['talla']
+            pez = form.cleaned_data['pez']
             try:
+                # v, ais = Filter_Route(mmsi, date_from, date_to, talla, pez)
                 v = Vessel.objects.filter(MMSI__contains=mmsi)
-                ais = AISVessel.objects.filter(MMSI__in=v)
+                ais = AISVessel.objects.filter(MMSI__in=v, BaseDateTime__range=(date_from, date_to))
                 collection = AISQuery_To_LineStringCollection(v, ais)
                 return render(request, 'webgisapp/maproute_search.html', {'collection' : collection})
             except Exception as e:
@@ -35,6 +42,6 @@ def search(request):
         form = SearchForm()
         return render(request, 'webgisapp/form.html', {'form' : form})
 
-# Búsqueda del MMSI pero desde el frontend (no busca en la base de datos) 
+
 def maproutefilter(request):
     return render(request, 'webgisapp/maproute_filter.html')
