@@ -13,7 +13,10 @@ def Join_Travels():
                                          Fecha_Inicio__lt=ais.BaseDateTime, Fecha_Fin__gt=ais.BaseDateTime)
             for plate in plates:
                 travel = Travel(Vessel_fk=vessel, AIS_fk=ais, Plate_fk=plate) # Relacionamos
-                travel.save()
+                try:
+                    travel.save()
+                except Exception as e:
+                    print(e)
             
 
 

@@ -1,4 +1,6 @@
 from webgisapp.models import *
+from .ais_to_geojson import AISQuery_To_Collection
+from geojson import LineString, Point, MultiPoint
 import datetime
 
 def Filter_Route(MMSI, date_from, date_to, talla, pez):
@@ -43,3 +45,25 @@ def Filter_Route(MMSI, date_from, date_to, talla, pez):
             vessel = vessel.filter(Matricula__in=Plate.objects.filter(Lote__in=lote_ids).values_list('Matricula', flat=True))
             ais = ais.filter(MMSI__in=vessel)
     return vessel, ais
+
+def Filter_Type(TypeStr, v, ais):
+    """
+    Simple filter and selection of collections and route by type we want to choose
+    Input: String
+    Output: FeatureCollection, String, String
+    """
+    route = 'webgisapp/maproute_search.html'
+    if TypeStr == 'Line':
+        collection = AISQuery_To_Collection(v, ais, LineString)
+        typee='line'
+    elif TypeStr == 'Point':
+        collection = AISQuery_To_Collection(v, ais, MultiPoint)
+        typee='circle'
+    elif TypeStr == 'PointAndLine':
+        collection = AISQuery_To_Collection(v, ais, LineString)
+        typee='pointandline'
+    elif TypeStr == 'Heat':
+        collection = AISQuery_To_Collection(v, ais, MultiPoint)
+        typee='heat'
+        route='webgisapp/maproute_heat.html'
+    return collection, route, typee

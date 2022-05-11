@@ -2,10 +2,8 @@ from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from .forms import SearchForm
-from geojson import FeatureCollection
 from webgisapp.models import AISVessel, Vessel
-from webgisapp.utils.ais_to_geojson import AISQuery_To_LineStringCollection
-from webgisapp.utils.filter import Filter_Route
+from webgisapp.utils.filter import Filter_Route, Filter_Type
 
 
 # Mapa de calor 
@@ -32,15 +30,16 @@ def search(request):
             talla = form.cleaned_data['talla']
             pez = form.cleaned_data['pez']
             try:
+                Type = 'PointAndLine'
                 # Hacemos busquedad
                 v, ais = Filter_Route(mmsi, date_from, date_to, talla, pez)
-                # Pasamos a GEOJson
-                collection = AISQuery_To_LineStringCollection(v, ais)
-                return render(request, 'webgisapp/maproute_search.html', {'collection' : collection})
+                # Elegimos en base al tipo
+                collection, route, typee = Filter_Type(Type, v, ais)
+                return render(request, route, {'collection' : collection, 'type':typee})
             except Exception as e:
                 raise e
         else:
-            # TOOD poner error
+            # TODO poner error
             pass
     else:
         form = SearchForm()

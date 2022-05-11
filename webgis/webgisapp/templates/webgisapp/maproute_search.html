@@ -83,6 +83,7 @@
 			 name="filter" placeholder="Filter">
 	</div>
 		{{ collection|json_script:"collection" }}
+		{{ type|json_script:"type" }}
 <script>
 	const layerIDs = [];
 	const filterInput = document.getElementById('filter-input');
@@ -107,13 +108,52 @@
 						const vesselID = `${MMSI}`;
 
 						if(!map.getLayer(vesselID)) {
-								map.addLayer({
-										'id':vesselID,
-										'type':'line',
-										'source':'vessels',
-										'filter': ['==', 'MMSI', vesselID]
+								type=JSON.parse(document.getElementById('type').textContent)
+								if(type == "pointandline") {
+									map.addLayer({
+											'id':vesselID,
+											'type':'circle',
+											'source':'vessels',
+											'filter': ['==', 'MMSI', vesselID],
+											'paint': {
+													'circle-color': ['get', 'Color']
+											}			
 									});
-								layerIDs.push(vesselID)
+									layerIDs.push(vesselID)
+									map.addLayer({
+											'id':vesselID+'line',
+											'type':'line',
+											'source':'vessels',
+											'filter': ['==', 'MMSI', vesselID],
+											'paint': {
+												'line-color': ['get', 'Color'],
+												'line-width': 3
+											}
+										});
+									layerIDs.push(vesselID)
+								} else if(type == 'line') {
+									map.addLayer({
+											'id':vesselID,
+											'type':JSON.parse(document.getElementById('type').textContent),
+											'source':'vessels',
+											'filter': ['==', 'MMSI', vesselID],
+											'paint': {
+												'line-color': ['get', 'Color'],
+												'line-width': 3
+											}
+										});
+									layerIDs.push(vesselID)
+								} else {
+									map.addLayer({
+											'id':vesselID,
+											'type':'circle',
+											'source':'vessels',
+											'filter': ['==', 'MMSI', vesselID],
+											'paint': {
+													'circle-color': ['get', 'Color']
+											}			
+									});
+								}
 							}
 					}
 				

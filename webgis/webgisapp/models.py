@@ -57,3 +57,7 @@ class Travel(models.Model):
     Plate_fk = models.ForeignKey(Plate, on_delete=models.CASCADE)
     class Meta:
         unique_together = ('Vessel_fk', 'AIS_fk', 'Plate_fk')
+
+    def to_string(self):
+        return "Travel with AIS:(" + AIS_fk.id + ") Vessel:(" + \
+                Vessel_fk.id + ") Plate:(" + Plate_kf.id + ")"

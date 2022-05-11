@@ -1,5 +1,5 @@
 from webgisapp.models import AISVessel, Vessel
-from geojson import FeatureCollection, Feature, LineString
+from geojson import FeatureCollection, Feature, LineString, Point
 
 colors = [
     "#fe0000", # Red
@@ -16,7 +16,7 @@ colors = [
     "#cb01af", # Red Violet
 ]
 
-def AISQuery_To_LineStringCollection(Vessels, AISQuery):
+def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
     """ 
     From a Vessel and AISVessel (Model) QuerySet creates
     a GeoJSON LineStringCollection
@@ -33,7 +33,7 @@ def AISQuery_To_LineStringCollection(Vessels, AISQuery):
             features.append(
                 Feature(
                     # Guardamos posición geográfica
-                    geometry = LineString([(AIS.LON, AIS.LAT) for AIS in AIS_Q]),
+                    geometry = Type([(AIS.LON, AIS.LAT) for AIS in AIS_Q]),
                     properties = {
                         'MMSI': Vessel.MMSI,
                         'VesselName' : Vessel.VesselName,
