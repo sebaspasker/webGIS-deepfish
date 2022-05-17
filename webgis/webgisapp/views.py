@@ -1,16 +1,17 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from .forms import SearchForm
 from webgisapp.models import AISVessel, Vessel
 from webgisapp.utils.filter import Filter_Route, Filter_Type
+from webgisapp.utils.plot_data_kg_travel import PlotController
 
 
 # Mapa de calor 
 def index(request):
     return render(request, 'webgisapp/index.html')
 
-# Mapa de rutas de tres rutas mmsi ejemplo
+# Mapa de rutas de tres rutas mmsi ejemplmv
 def maproute(request):
     return render(request, 'webgisapp/maproute.html')
     
@@ -30,7 +31,7 @@ def search(request):
             talla = form.cleaned_data['talla']
             pez = form.cleaned_data['pez']
             try:
-                Type = 'PointAndLine'
+                Type = ['Line', 'Point', 'PointAndLine', 'Heat'][1]
                 # Hacemos busquedad
                 v, ais = Filter_Route(mmsi, date_from, date_to, talla, pez)
                 # Elegimos en base al tipo
@@ -45,6 +46,12 @@ def search(request):
         form = SearchForm()
         return render(request, 'webgisapp/form.html', {'form' : form})
 
+
+def plotpage(request):
+    # Vemos los datos que queremos representar y
+    # lo escribimos en plot.html
+    PlotController(1, datetime.now() - timedelta(days=4), datetime.now() + timedelta(days=5))
+    return render(request, 'webgisapp/plot_page.html')
 
 def maproutefilter(request):
     return render(request, 'webgisapp/maproute_filter.html')

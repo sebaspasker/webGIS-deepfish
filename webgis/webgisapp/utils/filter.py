@@ -31,18 +31,25 @@ def Filter_Route(MMSI, date_from, date_to, talla, pez):
             # Busquedad en base a rango de fecha
             if null_q[1]:
                 ais = ais.filter(BaseDateTime__range=(date_from, date_to))
-                plate = plate.filter(Fecha_Inicio__range=(date_from, date_to), Fecha_Fin__range=(date_from, date_to))
+                plate = plate.filter(Fecha_Inicio__range=(date_from, date_to), 
+                                     Fecha_Fin__range=(date_from, date_to))
         elif i == 3 and notNull:
             # Busquedad en base a la talla del pez
-            lote_ids = Fish_Plate.objects.filter(Lote__in=Plate.objects.filter(Matricula__in=vessel),
-                                                 Talla_cm=talla).values_list('Lote', flat=True)
-            vessel = vessel.filter(Matricula__in=Plate.objects.filter(Lote__in=lote_ids).values_list('Matricula',flat=True))
+            lote_ids = Fish_Plate.objects.filter(Lote__in=Plate.objects
+                                                 .filter(Matricula__in=vessel),Talla_cm=talla) \
+                                                 .values_list('Lote', flat=True)
+            vessel = vessel.filter(Matricula__in=Plate.objects
+                                   .filter(Lote__in=lote_ids)
+                                   .values_list('Matricula',flat=True))
         elif i == 4 and notNull:
             # Busquedad en base al nombre comercial del pez 
             fish = Fish.objects.filter(Nombre_Comercial__startswith=pez)
-            lote_ids = Fish_Plate.objects.filter(Lote__in=Plate.objects.filter(Matricula__in=vessel),
-                                                 Nombre_Cientifico__in=fish).values_list('Lote', flat=True)
-            vessel = vessel.filter(Matricula__in=Plate.objects.filter(Lote__in=lote_ids).values_list('Matricula', flat=True))
+            lote_ids = Fish_Plate.objects.filter(Lote__in=Plate.objects
+                                                 .filter(Matricula__in=vessel),Nombre_Cientifico__in=fish) \
+                                                 .values_list('Lote', flat=True)
+            vessel = vessel.filter(Matricula__in=Plate.objects \
+                                   .filter(Lote__in=lote_ids) \
+                                   .values_list('Matricula', flat=True))
             ais = ais.filter(MMSI__in=vessel)
     return vessel, ais
 
@@ -63,7 +70,7 @@ def Filter_Type(TypeStr, v, ais):
         collection = AISQuery_To_Collection(v, ais, LineString)
         typee='pointandline'
     elif TypeStr == 'Heat':
-        collection = AISQuery_To_Collection(v, ais, MultiPoint)
+        collection = AISQuery_To_Collection(v, ais, MultiPoint, True)
         typee='heat'
-        route='webgisapp/maproute_heat.html'
+        route='webgisapp/maproutes/heat.html'
     return collection, route, typee

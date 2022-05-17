@@ -127,7 +127,7 @@
 											'filter': ['==', 'MMSI', vesselID],
 											'paint': {
 												'line-color': ['get', 'Color'],
-												'line-width': 3
+												'line-width': 1
 											}
 										});
 									layerIDs.push(vesselID)
@@ -153,19 +153,11 @@
 													'circle-color': ['get', 'Color']
 											}			
 									});
+									layerIDs.push(vesselID)
 								}
 							}
 					}
 				
-					filterInput.addEventListener('keyup', (e) => {
-							for (const vesselID of layerIDs) {
-								map.setLayoutProperty(
-									vesselID,
-									'visibility',
-									vesselID.startsWith(value) ? 'visible' : 'none'
-								);
-							}
-						});
 				});
 		
 </script>
