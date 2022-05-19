@@ -1,22 +1,85 @@
 from webgisapp.models import *
+from .abbr import *
 
-def Join_Travels():
+def Join_Travels(vessels = None, aiss = None, plates = None):
     """
     Automatización para crear una triple relación entre los barcos, las bandejas y 
-    los ais y subirlo a la tabla de Travels
+    los ais y subirlo a la tabla de Travels.
     """
+    v_None = aiss_None = p_None = False
+    if vessels is None:
+        vessels = Vessel.objects.all()
+    if aiss is None:
+        aiss = AISVessel.objects.all()
+    if plates is None:
+        plates = Plate.objects.all()
+    
     vessels = Vessel.objects.all()
     for vessel in vessels:
-        aiss = AISVessel.objects.filter(MMSI=vessel) # FIltramos ais en base al vessel
-        for ais in aiss:
-            plates = Plate.objects.filter(Matricula=vessel,  # Filtramos bandejas en base al vessel y fecha ais
-                                         Fecha_Inicio__lt=ais.BaseDateTime, Fecha_Fin__gt=ais.BaseDateTime)
-            for plate in plates:
+        aisss = aiss.filter(MMSI=vessel) # FIltramos ais en base al vessel
+        for ais in aisss:
+            platess = plates.filter(Matricula=vessel,  # Filtramos bandejas en base al vessel y fecha ais
+                                     Fecha_Inicio__lt=ais.BaseDateTime, Fecha_Fin__gt=ais.BaseDateTime)
+            for plate in platess:
                 travel = Travel(Vessel_fk=vessel, AIS_fk=ais, Plate_fk=plate) # Relacionamos
                 try:
                     travel.save()
                 except Exception as e:
                     print(e)
             
+def Delete_None_Existing_Travels(travels = None):
+    """
+    Elimina los viajes en los que ya no existe relación.
+    """
+    if travels is None:
+        travels = Travel.objects.all()
+    vessels = Vessel.objects.all()
+    ais = AISVessel.objects.all()
+    plates = Plate.objects.all()
+    for travel in travels:
+        if travel.AIS_fk not in ais or \
+           travel.Vessel_fk not in vessels or \
+           travel.Plate_fk not in plates:
+            travel.delete()
+
+def Comprobe_Outdated_Travels(travels = None):
+    """
+    Comprueba si los viajes están desactualizados.
+    """
+    if travels is None:
+        travels = Travel.objects.all()
+    vessels = Vessel.objects.all()
+    ais = AISVessel.objects.all()
+    plates = Plate.objects.all()
+    for travel in travels:
+        if travel.AIS_fk not in ais or \
+           travel.Vessel_fk not in vessels or \
+           travel.Plate_fk not in plates:
+            return True
+    return False
+
+def Comprobe_Possible_Join_Travels(ais = None, plates = None, vessels = None):
+    """ 
+    Comprueba si existen viajes existentes sin añadir a la base de datos.
+    """
+    if ais is None:
+        ais = allAIS()
+    if plates is None:
+        plates = allPlates()
+    if vessels is None:
+        vessels = allVessels()
+    
+    travels = Travel.objects.all()
+    for vessel in vessels:
+        aiss = ais.filter(MMSI=vessel)
+        platess = plates.filter(Matricula=vessel.Matricula)
+        for ais_obj in aiss:
+            for plate in platess:
+                try:
+                    t = Travel(Vessel_fk=vessel, Plate_fk=plate, AIS_fk=ais)
+                    t.save()
+                except Exception as e:
+                    return True
+    return False
 
 

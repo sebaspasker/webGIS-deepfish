@@ -7,3 +7,4 @@ class SearchForm(forms.Form):
     end_date = forms.DateField(label="Fin", widget=AdminDateWidget(), required=False)
     talla = forms.IntegerField(label="Talla", required=False)
     pez = forms.CharField(label="Pez", max_length=30, required=False)
+    option = forms.IntegerField(label="Opción", required=True)

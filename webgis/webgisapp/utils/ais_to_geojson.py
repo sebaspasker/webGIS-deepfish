@@ -1,6 +1,10 @@
+from datetime import timedelta
+from django.db.models.query import QuerySet
+from .exceptions import *
 from webgisapp.models import AISVessel, Vessel, Travel
 from geojson import FeatureCollection, Feature, LineString, Point
 from .weight_kg_generator import relateAISKg
+from .join_travel import Delete_None_Existing_Travels, Comprobe_Outdated_Travels
 
 colors = [
     "#fe0000", # Red
@@ -26,6 +30,9 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
         (QuerySet, QuerySet)
         returns FeatureCollection
     """
+
+    FormatComprobation(Vessels, AISQuery, Type, Heat)
+
     features = []
     color = 0
     for Vessel in Vessels:
@@ -33,19 +40,62 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
         if len(AIS_Q) > 0:
             if Heat:
                 travels = Travel.objects.filter(AIS_fk__in=AIS_Q)
+                if Comprobe_Outdated_Travels(travels):
+                    Delete_None_Existing_Travels(travels)
                 travel_dict = relateAISKg(travels)
-            f = Feature(
-                # Guardamos posición geográfica
-                geometry = Type([(AIS.LON, AIS.LAT) for AIS in AIS_Q]),
-                properties = {
-                    'MMSI': Vessel.MMSI,
-                    'VesselName' : Vessel.VesselName,
-                    'Matricula' : Vessel.Matricula,
-                    'Color' : colors[color % len(colors)],
-                })
-            if Heat and len(travels) > 0:
-                f.properties['Weight'] = travel_dict[travels[0].id]['Kg']
-            features.append(f)
-            color += 1
+
+            ais_array = []
+            ais_group = []
+            for ais in AIS_Q: 
+                # Separamos el AIS por grupos para que no se solapen rutas
+                # en las lineas
+                if ais == AIS_Q[0]: 
+                    date_before = ais.BaseDateTime
+                date = ais.BaseDateTime
+                # Comparamos tiempos del ais y el anterior y 
+                # lo juntamos por grupos
+                if date_before + timedelta(hours=1) < date:
+                    ais_array.append(ais_group.copy()) 
+                    ais_group = []
+                ais_group.append(ais)
+                date_before = ais.BaseDateTime
+            ais_array.append(ais_group.copy()) 
+
+            for ais_g in ais_array:
+                f = Feature(
+                    # Guardamos posición geográfica
+                    geometry = Type([(AIS.LON, AIS.LAT) for AIS in ais_g]),
+                    properties = {
+                        'MMSI': Vessel.MMSI,
+                        'VesselName' : Vessel.VesselName,
+                        'Matricula' : Vessel.Matricula,
+                        'Color' : colors[color % len(colors)],
+                    })
+                if Heat and len(travels) > 0:
+                    f.properties['Weight'] = travel_dict[travels[0].id]['Kg']
+                features.append(f)
+                color += 1
     return FeatureCollection(features)
 
+def FormatComprobation(Vessels, AISQuery, Type, Heat):
+    if Vessels is None:
+        raise EmptyVarException
+    elif AISQuery is None:
+        raise EmptyVarException
+    elif Type is None:
+        raise EmptyVarException
+    elif Heat is None:
+        raise EmptyVarException
+    elif not isinstance(Vessels, QuerySet):
+        raise InstanceTypeException
+    elif not isinstance(AISQuery, QuerySet):
+        raise InstanceTypeException
+    elif not isinstance(Type, Point.__class__) and \
+            not isinstance(Type, LineString.__class__):
+        raise InstanceTypeException
+    elif not isinstance(Heat, bool):
+        raise InstanceTypeException
+    elif len(Vessels) > 0 and not isinstance(Vessels[0], Vessel):
+        raise QueryTypeException
+    elif len(AISQuery) and not isinstance(AISQuery[0], AISVessel):
+        raise QueryTypeException

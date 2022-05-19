@@ -30,8 +30,9 @@ def search(request):
             date_to = form.cleaned_data['end_date']
             talla = form.cleaned_data['talla']
             pez = form.cleaned_data['pez']
+            option = form.cleaned_data['option']
             try:
-                Type = ['Line', 'Point', 'PointAndLine', 'Heat'][1]
+                Type = ['Line', 'Point', 'PointAndLine', 'Heat'][option]
                 # Hacemos busquedad
                 v, ais = Filter_Route(mmsi, date_from, date_to, talla, pez)
                 # Elegimos en base al tipo
@@ -50,7 +51,7 @@ def search(request):
 def plotpage(request):
     # Vemos los datos que queremos representar y
     # lo escribimos en plot.html
-    PlotController(1, datetime.now() - timedelta(days=4), datetime.now() + timedelta(days=5))
+    PlotController(5, datetime.now() - timedelta(days=4), datetime.now() + timedelta(days=5))
     return render(request, 'webgisapp/plot_page.html')
 
 def maproutefilter(request):
