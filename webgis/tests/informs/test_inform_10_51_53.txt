@@ -1,0 +1,758 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.2, pytest-7.1.2, pluggy-1.0.0
+django: settings: webgis.settings (from ini)
+rootdir: /home/sebas_pasker/Documents/Trabajo_Investigacion/Deepfish2/cuadro_mando/project/webGIS/deepfish-webgis/webgis, configfile: pytest.ini
+plugins: django-4.5.2
+collected 10 items
+
+tests/test_ais_query.py .FFFFFFFFF                                       [100%]
+
+=================================== FAILURES ===================================
+__________________________ TestAISQuery.testAISEmpty ___________________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df984c0>
+
+    def testAISEmpty(self):
+        try:
+>           AISQuery_To_Collection(
+                allVessels(),
+                None,
+                Point,
+            )
+
+tests/test_ais_query.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+Vessels = <QuerySet [<Vessel: Vessel object (123456789)>, <Vessel: Vessel object (987654321)>]>
+AISQuery = None, Type = <class 'geojson.geometry.Point'>, Heat = False
+
+    def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
+        """
+        From a Vessel and AISVessel (Model) QuerySet creates
+        a GeoJSON LineStringCollection
+    
+        Parameters:
+            (QuerySet, QuerySet)
+            returns FeatureCollection
+        """
+        if Vessels is None:
+            raise EmptyVarException
+        features = []
+        color = 0
+        for Vessel in Vessels:
+>           AIS_Q = AISQuery.filter(MMSI=Vessel) # Buscamos los AIS que concuerden con el vessel
+E           AttributeError: 'NoneType' object has no attribute 'filter'
+
+webgisapp/utils/ais_to_geojson.py:37: AttributeError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df984c0>
+
+    def testAISEmpty(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                None,
+                Point,
+            )
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, EmptyVarException) == True
+E           assert False == True
+E            +  where False = isinstance(AttributeError("'NoneType' object has no attribute 'filter'"), EmptyVarException)
+
+tests/test_ais_query.py:83: AssertionError
+__________________________ TestAISQuery.testTypeEmpty __________________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df987f0>
+
+    def testTypeEmpty(self):
+        try:
+>           AISQuery_To_Collection(
+                allVessels(),
+                allAIS(),
+                None,
+            )
+
+tests/test_ais_query.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+Vessels = <QuerySet [<Vessel: Vessel object (123456789)>, <Vessel: Vessel object (987654321)>]>
+AISQuery = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+Type = None, Heat = False
+
+    def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
+        """
+        From a Vessel and AISVessel (Model) QuerySet creates
+        a GeoJSON LineStringCollection
+    
+        Parameters:
+            (QuerySet, QuerySet)
+            returns FeatureCollection
+        """
+        if Vessels is None:
+            raise EmptyVarException
+        features = []
+        color = 0
+        for Vessel in Vessels:
+            AIS_Q = AISQuery.filter(MMSI=Vessel) # Buscamos los AIS que concuerden con el vessel
+            if len(AIS_Q) > 0:
+                if Heat:
+                    travels = Travel.objects.filter(AIS_fk__in=AIS_Q)
+                    if Comprobe_Outdated_Travels(travels):
+                        Delete_None_Existing_Travels(travels)
+                    travel_dict = relateAISKg(travels)
+    
+                ais_array = []
+                ais_group = []
+                for ais in AIS_Q:
+                    # Separamos el AIS por grupos para que no se solapen rutas
+                    # en las lineas
+                    if ais == AIS_Q[0]:
+                        date_before = ais.BaseDateTime
+                    date = ais.BaseDateTime
+                    # Comparamos tiempos del ais y el anterior y
+                    # lo juntamos por grupos
+                    if date_before + timedelta(hours=1) < date:
+                        ais_array.append(ais_group.copy())
+                        ais_group = []
+                    ais_group.append(ais)
+                    date_before = ais.BaseDateTime
+                ais_array.append(ais_group.copy())
+    
+                for ais_g in ais_array:
+                    f = Feature(
+                        # Guardamos posición geográfica
+>                       geometry = Type([(AIS.LON, AIS.LAT) for AIS in ais_g]),
+                        properties = {
+                            'MMSI': Vessel.MMSI,
+                            'VesselName' : Vessel.VesselName,
+                            'Matricula' : Vessel.Matricula,
+                            'Color' : colors[color % len(colors)],
+                        })
+E                   TypeError: 'NoneType' object is not callable
+
+webgisapp/utils/ais_to_geojson.py:65: TypeError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df987f0>
+
+    def testTypeEmpty(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                allAIS(),
+                None,
+            )
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, EmptyVarException) == True
+E           assert False == True
+E            +  where False = isinstance(TypeError("'NoneType' object is not callable"), EmptyVarException)
+
+tests/test_ais_query.py:95: AssertionError
+__________________________ TestAISQuery.testHeatEmpty __________________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df98b20>
+
+    def testHeatEmpty(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                allAIS(),
+                Point,
+                Heat=None,
+            )
+>           assert False, "Should have an exception"
+E           AssertionError: Should have an exception
+E           assert False
+
+tests/test_ais_query.py:105: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df98b20>
+
+    def testHeatEmpty(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                allAIS(),
+                Point,
+                Heat=None,
+            )
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, EmptyVarException) == True
+E           AssertionError: assert False == True
+E            +  where False = isinstance(AssertionError('Should have an exception\nassert False'), EmptyVarException)
+
+tests/test_ais_query.py:107: AssertionError
+________________________ TestAISQuery.testNotVesselType ________________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df98e50>
+
+    def testNotVesselType(self):
+        try:
+            AISQuery_To_Collection(
+                "",
+                allAIS(),
+                Point,
+            )
+>           assert False, "Should have an exception"
+E           AssertionError: Should have an exception
+E           assert False
+
+tests/test_ais_query.py:116: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df98e50>
+
+    def testNotVesselType(self):
+        try:
+            AISQuery_To_Collection(
+                "",
+                allAIS(),
+                Point,
+            )
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, InstanceTypeException) == True
+E           AssertionError: assert False == True
+E            +  where False = isinstance(AssertionError('Should have an exception\nassert False'), InstanceTypeException)
+
+tests/test_ais_query.py:118: AssertionError
+_________________________ TestAISQuery.testNotAISType __________________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df99180>
+
+    def testNotAISType(self):
+        try:
+>           AISQuery_To_Collection(
+                allVessels(),
+                "",
+                Point,
+                )
+
+tests/test_ais_query.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+Vessels = <QuerySet [<Vessel: Vessel object (123456789)>, <Vessel: Vessel object (987654321)>]>
+AISQuery = '', Type = <class 'geojson.geometry.Point'>, Heat = False
+
+    def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
+        """
+        From a Vessel and AISVessel (Model) QuerySet creates
+        a GeoJSON LineStringCollection
+    
+        Parameters:
+            (QuerySet, QuerySet)
+            returns FeatureCollection
+        """
+        if Vessels is None:
+            raise EmptyVarException
+        features = []
+        color = 0
+        for Vessel in Vessels:
+>           AIS_Q = AISQuery.filter(MMSI=Vessel) # Buscamos los AIS que concuerden con el vessel
+E           AttributeError: 'str' object has no attribute 'filter'
+
+webgisapp/utils/ais_to_geojson.py:37: AttributeError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df99180>
+
+    def testNotAISType(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                "",
+                Point,
+                )
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, InstanceTypeException) == True
+E           assert False == True
+E            +  where False = isinstance(AttributeError("'str' object has no attribute 'filter'"), InstanceTypeException)
+
+tests/test_ais_query.py:129: AssertionError
+_______________________ TestAISQuery.testNotGeojsonType ________________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df994b0>
+
+    def testNotGeojsonType(self):
+        try:
+>           AISQuery_To_Collection(
+                allVessels(),
+                allAIS(),
+                "",
+                )
+
+tests/test_ais_query.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+Vessels = <QuerySet [<Vessel: Vessel object (123456789)>, <Vessel: Vessel object (987654321)>]>
+AISQuery = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+Type = '', Heat = False
+
+    def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
+        """
+        From a Vessel and AISVessel (Model) QuerySet creates
+        a GeoJSON LineStringCollection
+    
+        Parameters:
+            (QuerySet, QuerySet)
+            returns FeatureCollection
+        """
+        if Vessels is None:
+            raise EmptyVarException
+        features = []
+        color = 0
+        for Vessel in Vessels:
+            AIS_Q = AISQuery.filter(MMSI=Vessel) # Buscamos los AIS que concuerden con el vessel
+            if len(AIS_Q) > 0:
+                if Heat:
+                    travels = Travel.objects.filter(AIS_fk__in=AIS_Q)
+                    if Comprobe_Outdated_Travels(travels):
+                        Delete_None_Existing_Travels(travels)
+                    travel_dict = relateAISKg(travels)
+    
+                ais_array = []
+                ais_group = []
+                for ais in AIS_Q:
+                    # Separamos el AIS por grupos para que no se solapen rutas
+                    # en las lineas
+                    if ais == AIS_Q[0]:
+                        date_before = ais.BaseDateTime
+                    date = ais.BaseDateTime
+                    # Comparamos tiempos del ais y el anterior y
+                    # lo juntamos por grupos
+                    if date_before + timedelta(hours=1) < date:
+                        ais_array.append(ais_group.copy())
+                        ais_group = []
+                    ais_group.append(ais)
+                    date_before = ais.BaseDateTime
+                ais_array.append(ais_group.copy())
+    
+                for ais_g in ais_array:
+                    f = Feature(
+                        # Guardamos posición geográfica
+>                       geometry = Type([(AIS.LON, AIS.LAT) for AIS in ais_g]),
+                        properties = {
+                            'MMSI': Vessel.MMSI,
+                            'VesselName' : Vessel.VesselName,
+                            'Matricula' : Vessel.Matricula,
+                            'Color' : colors[color % len(colors)],
+                        })
+E                   TypeError: 'str' object is not callable
+
+webgisapp/utils/ais_to_geojson.py:65: TypeError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df994b0>
+
+    def testNotGeojsonType(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                allAIS(),
+                "",
+                )
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, InstanceTypeException) == True
+E           assert False == True
+E            +  where False = isinstance(TypeError("'str' object is not callable"), InstanceTypeException)
+
+tests/test_ais_query.py:140: AssertionError
+_________________________ TestAISQuery.testHeatNotType _________________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df997e0>
+
+    def testHeatNotType(self):
+        try:
+>           AISQuery_To_Collection(
+                allVessels(),
+                allAIS(),
+                Point,
+                heat="")
+E               TypeError: AISQuery_To_Collection() got an unexpected keyword argument 'heat'
+
+tests/test_ais_query.py:144: TypeError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df997e0>
+
+    def testHeatNotType(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                allAIS(),
+                Point,
+                heat="")
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, InstanceTypeException) == True
+E           assert False == True
+E            +  where False = isinstance(TypeError("AISQuery_To_Collection() got an unexpected keyword argument 'heat'"), InstanceTypeException)
+
+tests/test_ais_query.py:151: AssertionError
+____________________ TestAISQuery.testVesselsDiferentQuery _____________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df99480>
+
+    def testVesselsDiferentQuery(self):
+        try:
+>           AISQuery_To_Collection(
+                allAIS(),
+                allAIS(),
+                Point,
+            )
+
+tests/test_ais_query.py:155: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+Vessels = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+AISQuery = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+Type = <class 'geojson.geometry.Point'>, Heat = False
+
+    def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
+        """
+        From a Vessel and AISVessel (Model) QuerySet creates
+        a GeoJSON LineStringCollection
+    
+        Parameters:
+            (QuerySet, QuerySet)
+            returns FeatureCollection
+        """
+        if Vessels is None:
+            raise EmptyVarException
+        features = []
+        color = 0
+        for Vessel in Vessels:
+>           AIS_Q = AISQuery.filter(MMSI=Vessel) # Buscamos los AIS que concuerden con el vessel
+
+webgisapp/utils/ais_to_geojson.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+args = (), kwargs = {'MMSI': <AISVessel: AISVessel object (1)>}
+
+    def filter(self, *args, **kwargs):
+        """
+        Return a new QuerySet instance with the args ANDed to the existing
+        set.
+        """
+        self._not_support_combined_queries("filter")
+>       return self._filter_or_exclude(False, args, kwargs)
+
+../../lib/python3.10/site-packages/django/db/models/query.py:1071: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+negate = False, args = (), kwargs = {'MMSI': <AISVessel: AISVessel object (1)>}
+
+    def _filter_or_exclude(self, negate, args, kwargs):
+        if (args or kwargs) and self.query.is_sliced:
+            raise TypeError("Cannot filter a query once a slice has been taken.")
+        clone = self._chain()
+        if self._defer_next_filter:
+            self._defer_next_filter = False
+            clone._deferred_filter = negate, args, kwargs
+        else:
+>           clone._filter_or_exclude_inplace(negate, args, kwargs)
+
+../../lib/python3.10/site-packages/django/db/models/query.py:1089: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+negate = False, args = (), kwargs = {'MMSI': <AISVessel: AISVessel object (1)>}
+
+    def _filter_or_exclude_inplace(self, negate, args, kwargs):
+        if negate:
+            self._query.add_q(~Q(*args, **kwargs))
+        else:
+>           self._query.add_q(Q(*args, **kwargs))
+
+../../lib/python3.10/site-packages/django/db/models/query.py:1096: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <django.db.models.sql.query.Query object at 0x7f316dbe9630>
+q_object = <Q: (AND: ('MMSI', <AISVessel: AISVessel object (1)>))>
+
+    def add_q(self, q_object):
+        """
+        A preprocessor for the internal _add_q(). Responsible for doing final
+        join promotion.
+        """
+        # For join promotion this case is doing an AND for the added q_object
+        # and existing conditions. So, any existing inner join forces the join
+        # type to remain inner. Existing outer joins can however be demoted.
+        # (Consider case where rel_a is LOUTER and rel_a__col=1 is added - if
+        # rel_a doesn't produce any rows, then the whole condition must fail.
+        # So, demotion is OK.
+        existing_inner = {
+            a for a in self.alias_map if self.alias_map[a].join_type == INNER
+        }
+>       clause, _ = self._add_q(q_object, self.used_aliases)
+
+../../lib/python3.10/site-packages/django/db/models/sql/query.py:1466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <django.db.models.sql.query.Query object at 0x7f316dbe9630>
+q_object = <Q: (AND: ('MMSI', <AISVessel: AISVessel object (1)>))>
+used_aliases = set(), branch_negated = False, current_negated = False
+allow_joins = True, split_subq = True, check_filterable = True
+
+    def _add_q(
+        self,
+        q_object,
+        used_aliases,
+        branch_negated=False,
+        current_negated=False,
+        allow_joins=True,
+        split_subq=True,
+        check_filterable=True,
+    ):
+        """Add a Q-object to the current filter."""
+        connector = q_object.connector
+        current_negated = current_negated ^ q_object.negated
+        branch_negated = branch_negated or q_object.negated
+        target_clause = WhereNode(connector=connector, negated=q_object.negated)
+        joinpromoter = JoinPromoter(
+            q_object.connector, len(q_object.children), current_negated
+        )
+        for child in q_object.children:
+>           child_clause, needed_inner = self.build_filter(
+                child,
+                can_reuse=used_aliases,
+                branch_negated=branch_negated,
+                current_negated=current_negated,
+                allow_joins=allow_joins,
+                split_subq=split_subq,
+                check_filterable=check_filterable,
+            )
+
+../../lib/python3.10/site-packages/django/db/models/sql/query.py:1496: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <django.db.models.sql.query.Query object at 0x7f316dbe9630>
+filter_expr = ('MMSI', <AISVessel: AISVessel object (1)>)
+branch_negated = False, current_negated = False, can_reuse = set()
+allow_joins = True, split_subq = True, check_filterable = True
+
+    def build_filter(
+        self,
+        filter_expr,
+        branch_negated=False,
+        current_negated=False,
+        can_reuse=None,
+        allow_joins=True,
+        split_subq=True,
+        check_filterable=True,
+    ):
+        """
+        Build a WhereNode for a single filter clause but don't add it
+        to this Query. Query.add_q() will then add this filter to the where
+        Node.
+    
+        The 'branch_negated' tells us if the current branch contains any
+        negations. This will be used to determine if subqueries are needed.
+    
+        The 'current_negated' is used to determine if the current filter is
+        negated or not and this will be used to determine if IS NULL filtering
+        is needed.
+    
+        The difference between current_negated and branch_negated is that
+        branch_negated is set on first negation, but current_negated is
+        flipped for each negation.
+    
+        Note that add_filter will not do any negating itself, that is done
+        upper in the code by add_q().
+    
+        The 'can_reuse' is a set of reusable joins for multijoins.
+    
+        The method will create a filter clause that can be added to the current
+        query. However, if the filter isn't added to the query then the caller
+        is responsible for unreffing the joins used.
+        """
+        if isinstance(filter_expr, dict):
+            raise FieldError("Cannot parse keyword query as dict")
+        if isinstance(filter_expr, Q):
+            return self._add_q(
+                filter_expr,
+                branch_negated=branch_negated,
+                current_negated=current_negated,
+                used_aliases=can_reuse,
+                allow_joins=allow_joins,
+                split_subq=split_subq,
+                check_filterable=check_filterable,
+            )
+        if hasattr(filter_expr, "resolve_expression"):
+            if not getattr(filter_expr, "conditional", False):
+                raise TypeError("Cannot filter against a non-conditional expression.")
+            condition = filter_expr.resolve_expression(self, allow_joins=allow_joins)
+            if not isinstance(condition, Lookup):
+                condition = self.build_lookup(["exact"], condition, True)
+            return WhereNode([condition], connector=AND), []
+        arg, value = filter_expr
+        if not arg:
+            raise FieldError("Cannot parse keyword query %r" % arg)
+        lookups, parts, reffed_expression = self.solve_lookup_type(arg)
+    
+        if check_filterable:
+            self.check_filterable(reffed_expression)
+    
+        if not allow_joins and len(parts) > 1:
+            raise FieldError("Joined field references are not permitted in this query")
+    
+        pre_joins = self.alias_refcount.copy()
+        value = self.resolve_lookup_value(value, can_reuse, allow_joins)
+        used_joins = {
+            k for k, v in self.alias_refcount.items() if v > pre_joins.get(k, 0)
+        }
+    
+        if check_filterable:
+            self.check_filterable(value)
+    
+        if reffed_expression:
+            condition = self.build_lookup(lookups, reffed_expression, value)
+            return WhereNode([condition], connector=AND), []
+    
+        opts = self.get_meta()
+        alias = self.get_initial_alias()
+        allow_many = not branch_negated or not split_subq
+    
+        try:
+            join_info = self.setup_joins(
+                parts,
+                opts,
+                alias,
+                can_reuse=can_reuse,
+                allow_many=allow_many,
+            )
+    
+            # Prevent iterator from being consumed by check_related_objects()
+            if isinstance(value, Iterator):
+                value = list(value)
+>           self.check_related_objects(join_info.final_field, value, join_info.opts)
+
+../../lib/python3.10/site-packages/django/db/models/sql/query.py:1379: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <django.db.models.sql.query.Query object at 0x7f316dbe9630>
+field = <django.db.models.fields.related.ForeignKey: MMSI>
+value = <AISVessel: AISVessel object (1)>, opts = <Options for Vessel>
+
+    def check_related_objects(self, field, value, opts):
+        """Check the type of object passed to query relations."""
+        if field.is_relation:
+            # Check that the field and the queryset use the same model in a
+            # query like .filter(author=Author.objects.all()). For example, the
+            # opts would be Author's (from the author field) and value.model
+            # would be Author.objects.all() queryset's .model (Author also).
+            # The field is the related field on the lhs side.
+            if (
+                isinstance(value, Query)
+                and not value.has_select_fields
+                and not check_rel_lookup_compatibility(value.model, opts, field)
+            ):
+                raise ValueError(
+                    'Cannot use QuerySet for "%s": Use a QuerySet for "%s".'
+                    % (value.model._meta.object_name, opts.object_name)
+                )
+            elif hasattr(value, "_meta"):
+>               self.check_query_object_type(value, opts, field)
+
+../../lib/python3.10/site-packages/django/db/models/sql/query.py:1195: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <django.db.models.sql.query.Query object at 0x7f316dbe9630>
+value = <AISVessel: AISVessel object (1)>, opts = <Options for Vessel>
+field = <django.db.models.fields.related.ForeignKey: MMSI>
+
+    def check_query_object_type(self, value, opts, field):
+        """
+        Check whether the object passed while querying is of the correct type.
+        If not, raise a ValueError specifying the wrong object.
+        """
+        if hasattr(value, "_meta"):
+            if not check_rel_lookup_compatibility(value._meta.model, opts, field):
+>               raise ValueError(
+                    'Cannot query "%s": Must be "%s" instance.'
+                    % (value, opts.object_name)
+                )
+E               ValueError: Cannot query "AISVessel object (1)": Must be "Vessel" instance.
+
+../../lib/python3.10/site-packages/django/db/models/sql/query.py:1172: ValueError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df99480>
+
+    def testVesselsDiferentQuery(self):
+        try:
+            AISQuery_To_Collection(
+                allAIS(),
+                allAIS(),
+                Point,
+            )
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, QueryTypeException) == True
+E           assert False == True
+E            +  where False = isinstance(ValueError('Cannot query "AISVessel object (1)": Must be "Vessel" instance.'), QueryTypeException)
+
+tests/test_ais_query.py:162: AssertionError
+______________________ TestAISQuery.testAISDiferentQuery _______________________
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df99b40>
+
+    def testAISDiferentQuery(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                allVessels(),
+                Point,
+            )
+>           assert False, "Should have an exception"
+E           AssertionError: Should have an exception
+E           assert False
+
+tests/test_ais_query.py:171: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_ais_query.TestAISQuery object at 0x7f316df99b40>
+
+    def testAISDiferentQuery(self):
+        try:
+            AISQuery_To_Collection(
+                allVessels(),
+                allVessels(),
+                Point,
+            )
+            assert False, "Should have an exception"
+        except Exception as e:
+>           assert isinstance(e, QueryTypeException) == True
+E           AssertionError: assert False == True
+E            +  where False = isinstance(AssertionError('Should have an exception\nassert False'), QueryTypeException)
+
+tests/test_ais_query.py:173: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_ais_query.py::TestAISQuery::testAISEmpty - assert False == ...
+FAILED tests/test_ais_query.py::TestAISQuery::testTypeEmpty - assert False ==...
+FAILED tests/test_ais_query.py::TestAISQuery::testHeatEmpty - AssertionError:...
+FAILED tests/test_ais_query.py::TestAISQuery::testNotVesselType - AssertionEr...
+FAILED tests/test_ais_query.py::TestAISQuery::testNotAISType - assert False =...
+FAILED tests/test_ais_query.py::TestAISQuery::testNotGeojsonType - assert Fal...
+FAILED tests/test_ais_query.py::TestAISQuery::testHeatNotType - assert False ...
+FAILED tests/test_ais_query.py::TestAISQuery::testVesselsDiferentQuery - asse...
+FAILED tests/test_ais_query.py::TestAISQuery::testAISDiferentQuery - Assertio...
+========================= 9 failed, 1 passed in 0.70s ==========================

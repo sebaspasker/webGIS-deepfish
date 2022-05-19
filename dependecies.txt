@@ -6,4 +6,4 @@ matplotlib
 geojson
 pyqt5
 mpld3
-
+pytest
