@@ -1,0 +1,427 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.2, pytest-7.1.2, pluggy-1.0.0
+django: settings: webgis.settings (from ini)
+rootdir: /home/sebas_pasker/Documents/Trabajo_Investigacion/Deepfish2/cuadro_mando/project/webGIS/deepfish-webgis/webgis, configfile: pytest.ini
+plugins: django-4.5.2
+collected 10 items
+
+tests/test_filter_type.py FFFFFF...F                                     [100%]
+
+=================================== FAILURES ===================================
+__________________________ TestFilterType.testNoneStr __________________________
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_runtest_hook.<locals>.<lambda> at 0x7fca85779c60>
+when = 'call'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: "Callable[[], TResult]",
+        when: "Literal['collect', 'setup', 'call', 'teardown']",
+        reraise: Optional[
+            Union[Type[BaseException], Tuple[Type[BaseException], ...]]
+        ] = None,
+    ) -> "CallInfo[TResult]":
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        start = timing.time()
+        precise_start = timing.perf_counter()
+        try:
+>           result: Optional[TResult] = func()
+
+../../lib/python3.10/site-packages/_pytest/runner.py:338: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../lib/python3.10/site-packages/_pytest/runner.py:259: in <lambda>
+    lambda: ihook(item=item, **kwds), when=when, reraise=reraise
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+../../lib/python3.10/site-packages/_pytest/runner.py:174: in pytest_runtest_call
+    raise e
+../../lib/python3.10/site-packages/_pytest/runner.py:166: in pytest_runtest_call
+    item.runtest()
+../../lib/python3.10/site-packages/_pytest/python.py:1761: in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+pyfuncitem = <Function testNoneStr>
+
+    @hookimpl(trylast=True)
+    def pytest_pyfunc_call(pyfuncitem: "Function") -> Optional[object]:
+        testfunction = pyfuncitem.obj
+        if is_async_function(testfunction):
+            async_warn_and_skip(pyfuncitem.nodeid)
+        funcargs = pyfuncitem.funcargs
+        testargs = {arg: funcargs[arg] for arg in pyfuncitem._fixtureinfo.argnames}
+>       result = testfunction(**testargs)
+E       TypeError: TestFilterType.testNoneStr() takes 0 positional arguments but 1 was given
+
+../../lib/python3.10/site-packages/_pytest/python.py:192: TypeError
+_______________________ TestFilterType.testOtherTypeStr ________________________
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_runtest_hook.<locals>.<lambda> at 0x7fca85152560>
+when = 'call'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: "Callable[[], TResult]",
+        when: "Literal['collect', 'setup', 'call', 'teardown']",
+        reraise: Optional[
+            Union[Type[BaseException], Tuple[Type[BaseException], ...]]
+        ] = None,
+    ) -> "CallInfo[TResult]":
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        start = timing.time()
+        precise_start = timing.perf_counter()
+        try:
+>           result: Optional[TResult] = func()
+
+../../lib/python3.10/site-packages/_pytest/runner.py:338: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../lib/python3.10/site-packages/_pytest/runner.py:259: in <lambda>
+    lambda: ihook(item=item, **kwds), when=when, reraise=reraise
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+../../lib/python3.10/site-packages/_pytest/runner.py:174: in pytest_runtest_call
+    raise e
+../../lib/python3.10/site-packages/_pytest/runner.py:166: in pytest_runtest_call
+    item.runtest()
+../../lib/python3.10/site-packages/_pytest/python.py:1761: in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+pyfuncitem = <Function testOtherTypeStr>
+
+    @hookimpl(trylast=True)
+    def pytest_pyfunc_call(pyfuncitem: "Function") -> Optional[object]:
+        testfunction = pyfuncitem.obj
+        if is_async_function(testfunction):
+            async_warn_and_skip(pyfuncitem.nodeid)
+        funcargs = pyfuncitem.funcargs
+        testargs = {arg: funcargs[arg] for arg in pyfuncitem._fixtureinfo.argnames}
+>       result = testfunction(**testargs)
+E       TypeError: TestFilterType.testOtherTypeStr() takes 0 positional arguments but 1 was given
+
+../../lib/python3.10/site-packages/_pytest/python.py:192: TypeError
+_________________________ TestFilterType.testStrEmpty __________________________
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_runtest_hook.<locals>.<lambda> at 0x7fca853785e0>
+when = 'call'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: "Callable[[], TResult]",
+        when: "Literal['collect', 'setup', 'call', 'teardown']",
+        reraise: Optional[
+            Union[Type[BaseException], Tuple[Type[BaseException], ...]]
+        ] = None,
+    ) -> "CallInfo[TResult]":
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        start = timing.time()
+        precise_start = timing.perf_counter()
+        try:
+>           result: Optional[TResult] = func()
+
+../../lib/python3.10/site-packages/_pytest/runner.py:338: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../lib/python3.10/site-packages/_pytest/runner.py:259: in <lambda>
+    lambda: ihook(item=item, **kwds), when=when, reraise=reraise
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+../../lib/python3.10/site-packages/_pytest/runner.py:174: in pytest_runtest_call
+    raise e
+../../lib/python3.10/site-packages/_pytest/runner.py:166: in pytest_runtest_call
+    item.runtest()
+../../lib/python3.10/site-packages/_pytest/python.py:1761: in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+pyfuncitem = <Function testStrEmpty>
+
+    @hookimpl(trylast=True)
+    def pytest_pyfunc_call(pyfuncitem: "Function") -> Optional[object]:
+        testfunction = pyfuncitem.obj
+        if is_async_function(testfunction):
+            async_warn_and_skip(pyfuncitem.nodeid)
+        funcargs = pyfuncitem.funcargs
+        testargs = {arg: funcargs[arg] for arg in pyfuncitem._fixtureinfo.argnames}
+>       result = testfunction(**testargs)
+E       TypeError: TestFilterType.testStrEmpty() takes 0 positional arguments but 1 was given
+
+../../lib/python3.10/site-packages/_pytest/python.py:192: TypeError
+_______________________ TestFilterType.testStrDifferent ________________________
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_runtest_hook.<locals>.<lambda> at 0x7fca851517e0>
+when = 'call'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: "Callable[[], TResult]",
+        when: "Literal['collect', 'setup', 'call', 'teardown']",
+        reraise: Optional[
+            Union[Type[BaseException], Tuple[Type[BaseException], ...]]
+        ] = None,
+    ) -> "CallInfo[TResult]":
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        start = timing.time()
+        precise_start = timing.perf_counter()
+        try:
+>           result: Optional[TResult] = func()
+
+../../lib/python3.10/site-packages/_pytest/runner.py:338: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../lib/python3.10/site-packages/_pytest/runner.py:259: in <lambda>
+    lambda: ihook(item=item, **kwds), when=when, reraise=reraise
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+../../lib/python3.10/site-packages/_pytest/runner.py:174: in pytest_runtest_call
+    raise e
+../../lib/python3.10/site-packages/_pytest/runner.py:166: in pytest_runtest_call
+    item.runtest()
+../../lib/python3.10/site-packages/_pytest/python.py:1761: in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+pyfuncitem = <Function testStrDifferent>
+
+    @hookimpl(trylast=True)
+    def pytest_pyfunc_call(pyfuncitem: "Function") -> Optional[object]:
+        testfunction = pyfuncitem.obj
+        if is_async_function(testfunction):
+            async_warn_and_skip(pyfuncitem.nodeid)
+        funcargs = pyfuncitem.funcargs
+        testargs = {arg: funcargs[arg] for arg in pyfuncitem._fixtureinfo.argnames}
+>       result = testfunction(**testargs)
+E       TypeError: TestFilterType.testStrDifferent() takes 0 positional arguments but 1 was given
+
+../../lib/python3.10/site-packages/_pytest/python.py:192: TypeError
+_________________________ TestFilterType.testNotVessel _________________________
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_runtest_hook.<locals>.<lambda> at 0x7fca855f5240>
+when = 'call'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: "Callable[[], TResult]",
+        when: "Literal['collect', 'setup', 'call', 'teardown']",
+        reraise: Optional[
+            Union[Type[BaseException], Tuple[Type[BaseException], ...]]
+        ] = None,
+    ) -> "CallInfo[TResult]":
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        start = timing.time()
+        precise_start = timing.perf_counter()
+        try:
+>           result: Optional[TResult] = func()
+
+../../lib/python3.10/site-packages/_pytest/runner.py:338: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../lib/python3.10/site-packages/_pytest/runner.py:259: in <lambda>
+    lambda: ihook(item=item, **kwds), when=when, reraise=reraise
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+../../lib/python3.10/site-packages/_pytest/runner.py:174: in pytest_runtest_call
+    raise e
+../../lib/python3.10/site-packages/_pytest/runner.py:166: in pytest_runtest_call
+    item.runtest()
+../../lib/python3.10/site-packages/_pytest/python.py:1761: in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+pyfuncitem = <Function testNotVessel>
+
+    @hookimpl(trylast=True)
+    def pytest_pyfunc_call(pyfuncitem: "Function") -> Optional[object]:
+        testfunction = pyfuncitem.obj
+        if is_async_function(testfunction):
+            async_warn_and_skip(pyfuncitem.nodeid)
+        funcargs = pyfuncitem.funcargs
+        testargs = {arg: funcargs[arg] for arg in pyfuncitem._fixtureinfo.argnames}
+>       result = testfunction(**testargs)
+E       TypeError: TestFilterType.testNotVessel() takes 0 positional arguments but 1 was given
+
+../../lib/python3.10/site-packages/_pytest/python.py:192: TypeError
+__________________________ TestFilterType.testNotAIS ___________________________
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_runtest_hook.<locals>.<lambda> at 0x7fca857b5510>
+when = 'call'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: "Callable[[], TResult]",
+        when: "Literal['collect', 'setup', 'call', 'teardown']",
+        reraise: Optional[
+            Union[Type[BaseException], Tuple[Type[BaseException], ...]]
+        ] = None,
+    ) -> "CallInfo[TResult]":
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        start = timing.time()
+        precise_start = timing.perf_counter()
+        try:
+>           result: Optional[TResult] = func()
+
+../../lib/python3.10/site-packages/_pytest/runner.py:338: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../lib/python3.10/site-packages/_pytest/runner.py:259: in <lambda>
+    lambda: ihook(item=item, **kwds), when=when, reraise=reraise
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+../../lib/python3.10/site-packages/_pytest/runner.py:174: in pytest_runtest_call
+    raise e
+../../lib/python3.10/site-packages/_pytest/runner.py:166: in pytest_runtest_call
+    item.runtest()
+../../lib/python3.10/site-packages/_pytest/python.py:1761: in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+../../lib/python3.10/site-packages/pluggy/_hooks.py:265: in __call__
+    return self._hookexec(self.name, self.get_hookimpls(), kwargs, firstresult)
+../../lib/python3.10/site-packages/pluggy/_manager.py:80: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+pyfuncitem = <Function testNotAIS>
+
+    @hookimpl(trylast=True)
+    def pytest_pyfunc_call(pyfuncitem: "Function") -> Optional[object]:
+        testfunction = pyfuncitem.obj
+        if is_async_function(testfunction):
+            async_warn_and_skip(pyfuncitem.nodeid)
+        funcargs = pyfuncitem.funcargs
+        testargs = {arg: funcargs[arg] for arg in pyfuncitem._fixtureinfo.argnames}
+>       result = testfunction(**testargs)
+E       TypeError: TestFilterType.testNotAIS() takes 0 positional arguments but 1 was given
+
+../../lib/python3.10/site-packages/_pytest/python.py:192: TypeError
+_________________________ TestFilterType.testHeatType __________________________
+
+self = <tests.test_filter_type.TestFilterType object at 0x7fca857d0220>
+
+    def testHeatType(self):
+        correct_route = "webgisapp/maproutes/heat.html"
+        correct_type = "heat"
+        collection, route, typee = Filter_Type("Heat", allVessels(), allAIS())
+    
+>       assert collection == self.collection3, "Different Collection"
+E       AssertionError: Different Collection
+E       assert {"features": ...reCollection"} == {"features": ...reCollection"}
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'features': [{"geometry": {"coordinates": [[1.0, 1.0]], "type": "MultiPoint"}, "properties": {"Color": "#fe0000", "MM...roperties": {"Color": "#fe4600", "MMSI": "987654321", "Matricula": "A321", "VesselName": "Jorge"}, "type": "Feature"}]} != {'features': [{"geometry": {"coordinates": [[1, 1]], "type": "MultiPoint"}, "properties": {"Color": "#fe0000", "MMSI":...olor": "#fe4600", "MMSI": "987654321", "Matricula": "A321", "VesselName": "Jorge", "Weight": 0.0}, "type": "Feature"}]}
+E         Use -v to get more diff
+
+tests/test_filter_type.py:206: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_filter_type.py::TestFilterType::testNoneStr - TypeError: Te...
+FAILED tests/test_filter_type.py::TestFilterType::testOtherTypeStr - TypeErro...
+FAILED tests/test_filter_type.py::TestFilterType::testStrEmpty - TypeError: T...
+FAILED tests/test_filter_type.py::TestFilterType::testStrDifferent - TypeErro...
+FAILED tests/test_filter_type.py::TestFilterType::testNotVessel - TypeError: ...
+FAILED tests/test_filter_type.py::TestFilterType::testNotAIS - TypeError: Tes...
+FAILED tests/test_filter_type.py::TestFilterType::testHeatType - AssertionErr...
+========================= 7 failed, 3 passed in 0.87s ==========================

@@ -1,0 +1,251 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.2, pytest-7.1.2, pluggy-1.0.0
+django: settings: webgis.settings (from ini)
+rootdir: /home/sebas_pasker/Documents/Trabajo_Investigacion/Deepfish2/cuadro_mando/project/webGIS/deepfish-webgis/webgis, configfile: pytest.ini
+plugins: django-4.5.2
+collected 10 items
+
+tests/test_filter_type.py FFFF.....F                                     [100%]
+
+=================================== FAILURES ===================================
+__________________________ TestFilterType.testNoneStr __________________________
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bd86710>
+
+    def testNoneStr(self):
+        try:
+>           Filter_Type(None, allVessels(), allAIS())
+
+tests/test_filter_type.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+TypeStr = None
+v = <QuerySet [<Vessel: Vessel object (123456789)>, <Vessel: Vessel object (987654321)>]>
+ais = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+
+    def Filter_Type(TypeStr, v, ais):
+        """
+        Simple filter and selection of collections and route by type we want to choose
+        Input: String
+        Output: FeatureCollection, String, String
+        """
+        route = 'webgisapp/maproute_search.html'
+        if TypeStr == 'Line':
+            collection = AISQuery_To_Collection(v, ais, LineString)
+            typee='line'
+        elif TypeStr == 'Point':
+            collection = AISQuery_To_Collection(v, ais, MultiPoint)
+            typee='circle'
+        elif TypeStr == 'PointAndLine':
+            collection = AISQuery_To_Collection(v, ais, LineString)
+            typee='pointandline'
+        elif TypeStr == 'Heat':
+            collection = AISQuery_To_Collection(v, ais, MultiPoint, True)
+            typee='heat'
+            route='webgisapp/maproutes/heat.html'
+>       return collection, route, typee
+E       UnboundLocalError: local variable 'collection' referenced before assignment
+
+webgisapp/utils/filter.py:76: UnboundLocalError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bd86710>
+
+    def testNoneStr(self):
+        try:
+            Filter_Type(None, allVessels(), allAIS())
+            assert False, "Debería de saltar una excepción"
+        except Exception as e:
+>           assert isinstance(e, EmptyVarException)
+E           assert False
+E            +  where False = isinstance(UnboundLocalError("local variable 'collection' referenced before assignment"), EmptyVarException)
+
+tests/test_filter_type.py:136: AssertionError
+_______________________ TestFilterType.testOtherTypeStr ________________________
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bd869b0>
+
+    def testOtherTypeStr(self):
+        try:
+>           Filter_Type(2, allVessels(), allAIS())
+
+tests/test_filter_type.py:140: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+TypeStr = 2
+v = <QuerySet [<Vessel: Vessel object (123456789)>, <Vessel: Vessel object (987654321)>]>
+ais = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+
+    def Filter_Type(TypeStr, v, ais):
+        """
+        Simple filter and selection of collections and route by type we want to choose
+        Input: String
+        Output: FeatureCollection, String, String
+        """
+        route = 'webgisapp/maproute_search.html'
+        if TypeStr == 'Line':
+            collection = AISQuery_To_Collection(v, ais, LineString)
+            typee='line'
+        elif TypeStr == 'Point':
+            collection = AISQuery_To_Collection(v, ais, MultiPoint)
+            typee='circle'
+        elif TypeStr == 'PointAndLine':
+            collection = AISQuery_To_Collection(v, ais, LineString)
+            typee='pointandline'
+        elif TypeStr == 'Heat':
+            collection = AISQuery_To_Collection(v, ais, MultiPoint, True)
+            typee='heat'
+            route='webgisapp/maproutes/heat.html'
+>       return collection, route, typee
+E       UnboundLocalError: local variable 'collection' referenced before assignment
+
+webgisapp/utils/filter.py:76: UnboundLocalError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bd869b0>
+
+    def testOtherTypeStr(self):
+        try:
+            Filter_Type(2, allVessels(), allAIS())
+            assert False, "Debería de saltar una excepción"
+        except Exception as e:
+>           assert isinstance(e, InstanceTypeException)
+E           assert False
+E            +  where False = isinstance(UnboundLocalError("local variable 'collection' referenced before assignment"), InstanceTypeException)
+
+tests/test_filter_type.py:143: AssertionError
+_________________________ TestFilterType.testStrEmpty __________________________
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bd86ce0>
+
+    def testStrEmpty(self):
+        try:
+>           Filter_Type("", allVessels(), allAIS())
+
+tests/test_filter_type.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+TypeStr = ''
+v = <QuerySet [<Vessel: Vessel object (123456789)>, <Vessel: Vessel object (987654321)>]>
+ais = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+
+    def Filter_Type(TypeStr, v, ais):
+        """
+        Simple filter and selection of collections and route by type we want to choose
+        Input: String
+        Output: FeatureCollection, String, String
+        """
+        route = 'webgisapp/maproute_search.html'
+        if TypeStr == 'Line':
+            collection = AISQuery_To_Collection(v, ais, LineString)
+            typee='line'
+        elif TypeStr == 'Point':
+            collection = AISQuery_To_Collection(v, ais, MultiPoint)
+            typee='circle'
+        elif TypeStr == 'PointAndLine':
+            collection = AISQuery_To_Collection(v, ais, LineString)
+            typee='pointandline'
+        elif TypeStr == 'Heat':
+            collection = AISQuery_To_Collection(v, ais, MultiPoint, True)
+            typee='heat'
+            route='webgisapp/maproutes/heat.html'
+>       return collection, route, typee
+E       UnboundLocalError: local variable 'collection' referenced before assignment
+
+webgisapp/utils/filter.py:76: UnboundLocalError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bd86ce0>
+
+    def testStrEmpty(self):
+        try:
+            Filter_Type("", allVessels(), allAIS())
+            assert False, "Debería de saltar una excepción"
+        except Exception as e:
+>           assert isinstance(e, EmptyVarException)
+E           assert False
+E            +  where False = isinstance(UnboundLocalError("local variable 'collection' referenced before assignment"), EmptyVarException)
+
+tests/test_filter_type.py:151: AssertionError
+_______________________ TestFilterType.testStrDifferent ________________________
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bd87010>
+
+    def testStrDifferent(self):
+        try:
+>           Filter_Type("Random", allVessels(), allAIS())
+
+tests/test_filter_type.py:155: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+TypeStr = 'Random'
+v = <QuerySet [<Vessel: Vessel object (123456789)>, <Vessel: Vessel object (987654321)>]>
+ais = <QuerySet [<AISVessel: AISVessel object (1)>, <AISVessel: AISVessel object (2)>]>
+
+    def Filter_Type(TypeStr, v, ais):
+        """
+        Simple filter and selection of collections and route by type we want to choose
+        Input: String
+        Output: FeatureCollection, String, String
+        """
+        route = 'webgisapp/maproute_search.html'
+        if TypeStr == 'Line':
+            collection = AISQuery_To_Collection(v, ais, LineString)
+            typee='line'
+        elif TypeStr == 'Point':
+            collection = AISQuery_To_Collection(v, ais, MultiPoint)
+            typee='circle'
+        elif TypeStr == 'PointAndLine':
+            collection = AISQuery_To_Collection(v, ais, LineString)
+            typee='pointandline'
+        elif TypeStr == 'Heat':
+            collection = AISQuery_To_Collection(v, ais, MultiPoint, True)
+            typee='heat'
+            route='webgisapp/maproutes/heat.html'
+>       return collection, route, typee
+E       UnboundLocalError: local variable 'collection' referenced before assignment
+
+webgisapp/utils/filter.py:76: UnboundLocalError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bd87010>
+
+    def testStrDifferent(self):
+        try:
+            Filter_Type("Random", allVessels(), allAIS())
+            assert False, "Debería de saltar una excepción"
+        except Exception as e:
+>           assert isinstance(e, IncorrectOptionException)
+E           assert False
+E            +  where False = isinstance(UnboundLocalError("local variable 'collection' referenced before assignment"), IncorrectOptionException)
+
+tests/test_filter_type.py:158: AssertionError
+_________________________ TestFilterType.testHeatType __________________________
+
+self = <tests.test_filter_type.TestFilterType object at 0x7f0b2bdb0370>
+
+    def testHeatType(self):
+        correct_route = "webgisapp/maproutes/heat.html"
+        correct_type = "heat"
+        collection, route, typee = Filter_Type("Heat", allVessels(), allAIS())
+    
+>       assert collection == self.collection3, "Different Collection"
+E       AssertionError: Different Collection
+E       assert {"features": ...reCollection"} == {"features": ...reCollection"}
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'features': [{"geometry": {"coordinates": [[1.0, 1.0]], "type": "MultiPoint"}, "properties": {"Color": "#fe0000", "MM...roperties": {"Color": "#fe4600", "MMSI": "987654321", "Matricula": "A321", "VesselName": "Jorge"}, "type": "Feature"}]} != {'features': [{"geometry": {"coordinates": [[1, 1]], "type": "MultiPoint"}, "properties": {"Color": "#fe0000", "MMSI":...olor": "#fe4600", "MMSI": "987654321", "Matricula": "A321", "VesselName": "Jorge", "Weight": 0.0}, "type": "Feature"}]}
+E         Use -v to get more diff
+
+tests/test_filter_type.py:206: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_filter_type.py::TestFilterType::testNoneStr - assert False
+FAILED tests/test_filter_type.py::TestFilterType::testOtherTypeStr - assert F...
+FAILED tests/test_filter_type.py::TestFilterType::testStrEmpty - assert False
+FAILED tests/test_filter_type.py::TestFilterType::testStrDifferent - assert F...
+FAILED tests/test_filter_type.py::TestFilterType::testHeatType - AssertionErr...
+========================= 5 failed, 5 passed in 0.50s ==========================
