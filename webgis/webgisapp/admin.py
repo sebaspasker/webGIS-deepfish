@@ -7,5 +7,3 @@ admin.site.register(Plate)
 admin.site.register(Fish_Plate)
 admin.site.register(Travel)
 admin.site.register(Fish)
-
-

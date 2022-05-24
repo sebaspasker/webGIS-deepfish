@@ -7,22 +7,23 @@ from .weight_kg_generator import relateAISKg
 from .join_travel import Delete_None_Existing_Travels, Comprobe_Outdated_Travels
 
 colors = [
-    "#fe0000", # Red
-    "#fe4600", # Red Orange
-    "#ff7f02", # Orange
-    "#ffb305", # Orange Yellow
-    "#fee002", # Yellow
-    "#7ac043", # Yellow Green
-    "#04a650", # Green
-    "#08a99a", # Blue Green
-    "#1150ff", # Blue 
-    "#7208a6", # Blue Violet
-    "#bb00ff", # Violet
-    "#cb01af", # Red Violet
+    "#fe0000",  # Red
+    "#fe4600",  # Red Orange
+    "#ff7f02",  # Orange
+    "#ffb305",  # Orange Yellow
+    "#fee002",  # Yellow
+    "#7ac043",  # Yellow Green
+    "#04a650",  # Green
+    "#08a99a",  # Blue Green
+    "#1150ff",  # Blue
+    "#7208a6",  # Blue Violet
+    "#bb00ff",  # Violet
+    "#cb01af",  # Red Violet
 ]
 
+
 def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
-    """ 
+    """
     From a Vessel and AISVessel (Model) QuerySet creates
     a GeoJSON LineStringCollection
 
@@ -36,7 +37,9 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
     features = []
     color = 0
     for Vessel in Vessels:
-        AIS_Q = AISQuery.filter(MMSI=Vessel) # Buscamos los AIS que concuerden con el vessel
+        AIS_Q = AISQuery.filter(
+            MMSI=Vessel
+        )  # Buscamos los AIS que concuerden con el vessel
         if len(AIS_Q) > 0:
             if Heat:
                 travels = Travel.objects.filter(AIS_fk__in=AIS_Q)
@@ -46,36 +49,40 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
 
             ais_array = []
             ais_group = []
-            for ais in AIS_Q: 
+            for ais in AIS_Q:
                 # Separamos el AIS por grupos para que no se solapen rutas
                 # en las lineas
-                if ais == AIS_Q[0]: 
+                if ais == AIS_Q[0]:
                     date_before = ais.BaseDateTime
                 date = ais.BaseDateTime
-                # Comparamos tiempos del ais y el anterior y 
+                # Comparamos tiempos del ais y el anterior y
                 # lo juntamos por grupos
                 if date_before + timedelta(hours=1) < date:
-                    ais_array.append(ais_group.copy()) 
+                    ais_array.append(ais_group.copy())
                     ais_group = []
                 ais_group.append(ais)
                 date_before = ais.BaseDateTime
-            ais_array.append(ais_group.copy()) 
+            ais_array.append(ais_group.copy())
 
             for ais_g in ais_array:
                 f = Feature(
                     # Guardamos posición geográfica
-                    geometry = Type([(AIS.LON, AIS.LAT) for AIS in ais_g]),
-                    properties = {
-                        'MMSI': Vessel.MMSI,
-                        'VesselName' : Vessel.VesselName,
-                        'Matricula' : Vessel.Matricula,
-                        'Color' : colors[color % len(colors)],
-                    })
-                if Heat and len(travels) > 0:
-                    f.properties['Weight'] = travel_dict[travels[0].id]['Kg']
+                    geometry=Type([(AIS.LON, AIS.LAT) for AIS in ais_g]),
+                    properties={
+                        "MMSI": Vessel.MMSI,
+                        "VesselName": Vessel.VesselName,
+                        "Matricula": Vessel.Matricula,
+                        "Color": colors[color % len(colors)],
+                    },
+                )
+                if Heat and len(travels) > 0 and travels[0].id in travel_dict:
+                    f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
+                elif Heat:
+                    f.properties["Weight"] = 0.0
                 features.append(f)
                 color += 1
     return FeatureCollection(features)
+
 
 def FormatComprobation(Vessels, AISQuery, Type, Heat):
     if Vessels is None:
@@ -90,8 +97,9 @@ def FormatComprobation(Vessels, AISQuery, Type, Heat):
         raise InstanceTypeException
     elif not isinstance(AISQuery, QuerySet):
         raise InstanceTypeException
-    elif not isinstance(Type, Point.__class__) and \
-            not isinstance(Type, LineString.__class__):
+    elif not isinstance(Type, Point.__class__) and not isinstance(
+        Type, LineString.__class__
+    ):
         raise InstanceTypeException
     elif not isinstance(Heat, bool):
         raise InstanceTypeException

@@ -7,37 +7,40 @@ from webgisapp.utils.filter import Filter_Route, Filter_Type
 from webgisapp.utils.plot_data_kg_travel import PlotController
 
 
-# Mapa de calor 
+# Mapa de calor
 def index(request):
-    return render(request, 'webgisapp/index.html')
+    return render(request, "webgisapp/index.html")
+
 
 # Mapa de rutas de tres rutas mmsi ejemplmv
 def maproute(request):
-    return render(request, 'webgisapp/maproute.html')
-    
+    return render(request, "webgisapp/maproute.html")
+
+
 # Mapa de rutas con filtrado y popups
 def maproutelayer(request):
-    return render(request, 'webgisapp/maproute_layer.html')
+    return render(request, "webgisapp/maproute_layer.html")
+
 
 # Búsqueda de rutas en base al MMSI
 def search(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = SearchForm(request.POST)
         if form.is_valid():
             # Recogemos información del form
-            mmsi = form.cleaned_data['MMSI']
-            date_from = form.cleaned_data['init_date']
-            date_to = form.cleaned_data['end_date']
-            talla = form.cleaned_data['talla']
-            pez = form.cleaned_data['pez']
-            option = form.cleaned_data['option']
+            mmsi = form.cleaned_data["MMSI"]
+            date_from = form.cleaned_data["init_date"]
+            date_to = form.cleaned_data["end_date"]
+            talla = form.cleaned_data["talla"]
+            pez = form.cleaned_data["pez"]
+            option = form.cleaned_data["option"]
             try:
-                Type = ['Line', 'Point', 'PointAndLine', 'Heat'][option]
+                Type = ["Line", "Point", "PointAndLine", "Heat"][option]
                 # Hacemos busquedad
                 v, ais = Filter_Route(mmsi, date_from, date_to, talla, pez)
                 # Elegimos en base al tipo
                 collection, route, typee = Filter_Type(Type, v, ais)
-                return render(request, route, {'collection' : collection, 'type':typee})
+                return render(request, route, {"collection": collection, "type": typee})
             except Exception as e:
                 raise e
         else:
@@ -45,14 +48,17 @@ def search(request):
             pass
     else:
         form = SearchForm()
-        return render(request, 'webgisapp/form.html', {'form' : form})
+        return render(request, "webgisapp/form.html", {"form": form})
 
 
 def plotpage(request):
     # Vemos los datos que queremos representar y
     # lo escribimos en plot.html
-    PlotController(5, datetime.now() - timedelta(days=4), datetime.now() + timedelta(days=5))
-    return render(request, 'webgisapp/plot_page.html')
+    PlotController(
+        5, datetime.now() - timedelta(days=4), datetime.now() + timedelta(days=5)
+    )
+    return render(request, "webgisapp/plot_page.html")
+
 
 def maproutefilter(request):
-    return render(request, 'webgisapp/maproute_filter.html')
+    return render(request, "webgisapp/maproute_filter.html")
