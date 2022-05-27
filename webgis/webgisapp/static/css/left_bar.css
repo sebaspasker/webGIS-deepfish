@@ -1,0 +1,17 @@
+#ship_image_id {
+	padding-right:0px;
+	padding-left:0px;
+	position: relative;
+	right: 17px;
+}
+
+#vessel_picture {
+	max-height: 200px;
+	height: 200px;
+	width: 100%;
+	vertical-align: middle;
+}
+
+img {
+	max-width: 100%;
+}

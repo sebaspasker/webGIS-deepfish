@@ -75,7 +75,8 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
                         "Color": colors[color % len(colors)],
                     },
                 )
-                if Heat and len(travels) > 0 and travels[0].id in travel_dict:
+                # if Heat and len(travels) > 0 and travels[0].id in travel_dict:
+                if Heat and len(travels) > 0:
                     f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
                 elif Heat:
                     f.properties["Weight"] = 0.0

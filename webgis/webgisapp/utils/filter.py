@@ -12,10 +12,6 @@ def Filter_Route(MMSI=None, date_from=None, date_to=None, talla=None, pez=None):
     Y mete un filtrado en la base de datos en base a esos parámetros.
     """
     null_q = []
-    if (isinstance(MMSI, str) and len(MMSI) == 0) or (
-        isinstance(pez, str) and len(pez) == 0
-    ):
-        raise EmptyVarException
     for var in [
         MMSI,
         date_from,

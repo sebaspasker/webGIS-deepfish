@@ -72,9 +72,10 @@ def Comprobe_Outdated_Travels(travels=None):
     return False
 
 
+# De momento no se utiliza
 def Comprobe_Possible_Join_Travels(ais=None, plates=None, vessels=None):
     """
-    Comprueba si existen viajes existentes sin añadir a la base de datos.
+    Comprueba si existen viajes existentes sin añadir a la base de datos y los guarda.
     """
     if ais is None:
         ais = allAIS()
