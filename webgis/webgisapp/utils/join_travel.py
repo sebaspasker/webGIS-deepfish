@@ -72,12 +72,15 @@ def Comprobe_Outdated_Travels(travels=None):
     return False
 
 
-def Comprobe_Possible_Join_Travels(ais=None, plates=None, vessels=None):
+def Comprobe_Possible_Join_Travels(aiss=None, plates=None, vessels=None):
     """
     Comprueba si existen viajes existentes sin añadir a la base de datos.
     """
-    if ais is None:
-        ais = allAIS()
+    """
+    TODO HE MODIFICADO ALGUNAS VARIABLES YA QUE SALÍA ERROR POR EL ORDEN
+    """
+    if aiss is None:
+        aiss = allAIS()
     if plates is None:
         plates = allPlates()
     if vessels is None:
@@ -85,16 +88,16 @@ def Comprobe_Possible_Join_Travels(ais=None, plates=None, vessels=None):
 
     travels = Travel.objects.all()
     for vessel in vessels:
-        aiss = ais.filter(MMSI=vessel)
+        ais = aiss.filter(MMSI=vessel)
         platess = plates.filter(Matricula=vessel.Matricula)
-        for ais_obj in aiss:
+        for ais_obj in ais:
             for plate in platess:
                 try:
                     t = Travel(Vessel_fk=vessel, Plate_fk=plate, AIS_fk=ais)
                     t.save()
                 except Exception as e:
-                    return True
-    return False
+                    return False
+    return True
 
 
 def comprobation_type(vessels, aiss, plates):
