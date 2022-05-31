@@ -37,7 +37,7 @@ def TimeKgAIS(
                 # Search fish plates
                 travels = Travel.objects.filter(AIS_fk=ais)
                 if Comprobe_Outdated_Travels(travels):
-                    Delete_Non_Existing_Travels(travels)
+                    Delete_None_Existing_Travels(travels)
 
                 if specie:
                     if "".__eq__(

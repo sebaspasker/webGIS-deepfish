@@ -31,16 +31,24 @@ class TestBarPlotData:
                 data=nodata, output_path = ""
             )
         except Exception as e:
-            template = "An exception of type {0} occured. Arguments: \n{1!r}"
-            message = template
 
             assert isinstance(
-                e, Exception
-            ), "Debería de saltar Exception"
-    
+                e,  AttributeError
+            ), "Debería de saltar AttributeError"
+            # TODO Esto esta mal. No debe pillar Exception, debe pillar la excepción adecuada
 
 
+    def testWrongOutputPath(self):
+        try:
+            BarPlotData(
+                output_path = "Hola"
+            )
+        except Exception as e:
 
+            assert isinstance(
+                e,  TypeError
+            ), "Debería de saltar TypeError"
+            # TODO Esto esta mal. No debe pillar Exception, debe pillar la excepción adecuada
 
 
 
