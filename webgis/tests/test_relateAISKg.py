@@ -59,7 +59,9 @@ class TestRelateAISKg:
 
 
     def testFishPlateExists(self):
+        # Esta mal, devuelve un diccionario
         fishplat = Fish_Plate.objects.filter(Nombre_Cientifico = self.p)
+        assert len(fishplat) > 0
         assert fishplat[0], "Debería dar True porque existe al menos 1 pez en la base de datos con esa info"
 
 
@@ -110,14 +112,28 @@ class TestRelateAISKg:
                 e, EmptySpecieException
             ), "Debería de saltar EmptySpecieException"
 
+# Setup Pez: "pez1", vessel: "barco1", ais: "ais1", plate: "plate1" -> 3*fishplate: "fishplate" -> "pez1" y 3
+# Creas dos travels relacionados fish plates
+# Travel(barco1, ais1, plate1)
+# Corres la funcion
+# dict -> return -> {travel.id : 9.0}. fishplate[travel.id] -> kg 
+# assert fishplate[travel.id] == 9.0
 
+# Crear una funcion con un travel
+# Una función con dos travels
 
+# funcion(Travels.objects.all())
+# function(Travels.objects.all()[0])
 
+# Travel con ningun plate relacionado
 
+    def testTravelWithKg(self):
+        pass
 
+    def testTravelWithoutKg(self):
+        pass
 
-
-
+    
 
 
 

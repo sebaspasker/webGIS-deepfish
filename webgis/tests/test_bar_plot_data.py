@@ -35,7 +35,6 @@ class TestBarPlotData:
             assert isinstance(
                 e,  AttributeError
             ), "Debería de saltar AttributeError"
-            # TODO Esto esta mal. No debe pillar Exception, debe pillar la excepción adecuada
 
 
     def testWrongOutputPath(self):
@@ -48,7 +47,31 @@ class TestBarPlotData:
             assert isinstance(
                 e,  TypeError
             ), "Debería de saltar TypeError"
-            # TODO Esto esta mal. No debe pillar Exception, debe pillar la excepción adecuada
+
+    # TODO comprobar q el xlabel y el ylabel sean del tipo correcto y si no devuelve excepción
+    def testWrongTypeXLabel(self):
+        try:
+            BarPlotData(
+                xlabel=5
+            )
+        except Exception as e:
+
+            assert isinstance(
+                e,  TypeError
+            ), "Debería de saltar TypeError"
+
+
+    def testWrongTypeYLabel(self):
+        try:
+            BarPlotData(
+                ylabel=5
+            )
+        except Exception as e:
+
+            assert isinstance(
+                e,  TypeError
+            ), "Debería de saltar TypeError"
+
 
 
 
