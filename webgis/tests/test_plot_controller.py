@@ -23,7 +23,7 @@ class TestPlotController:
         setupPlotController(self) 
 
     def testWrongOptionValue(self):
-        opt = "a"
+        opt = 8
         # Solo nos interesa lanzar la excepcion de option
         # No necesitamos crear dates correctas
         try:

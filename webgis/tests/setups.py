@@ -482,6 +482,7 @@ def setupComprobePossibleJoinTravel(self):
 
 def setupRelateAISKg(self):
     self.p = Fish.objects.create(Nombre_Cientifico="Pez1", Nombre_Comercial="Pez1")
+    self.p1 = Fish.objects.create(Nombre_Cientifico="Pez2", Nombre_Comercial="Pez2")
 
     self.v1 = Vessel.objects.create(MMSI="ABCDEF", VesselName="Juan", Matricula="Buque")
     time_init = datetime.datetime.now()
@@ -527,19 +528,65 @@ def setupRelateAISKg(self):
         Fecha_Inicio=time_init,
         Fecha_Fin=time_init + timedelta(minutes=5),
         Nombre_Pez_Bandeja="Bonito como tu",
-        Kg_Bandeja=2,
+        Kg_Bandeja=3,
+    )
+
+    self.plate2 = Plate.objects.create(
+        Lote="Lote2",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=3,
+    )
+
+    self.plate3 = Plate.objects.create(
+        Lote="Lote3",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=20,
     )
 
     self.fish_plate = Fish_Plate.objects.create(
         Lote=self.plate1,
         Nombre_Cientifico=self.p,
-        Talla_cm=2,
-        Cantidad=2,
-        Peso=2,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=3,
+    )
+
+    self.fish_plate2 = Fish_Plate.objects.create(
+        Lote=self.plate3,
+        Nombre_Cientifico=self.p,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=5,
+    )
+
+    self.fish_plate3 = Fish_Plate.objects.create(
+        Lote=self.plate3,
+        Nombre_Cientifico=self.p1,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=15,
     )
 
     self.travel1 = Travel.objects.create(
         AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate1
+    )
+
+    self.travel2 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate2
+    )
+
+    self.travel3 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate3
     )
     
 

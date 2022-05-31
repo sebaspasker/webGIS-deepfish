@@ -127,13 +127,24 @@ class TestRelateAISKg:
 
 # Travel con ningun plate relacionado
 
-    def testTravelWithKg(self):
-        pass
+# TRAVEL1 ESTA RELACIONADO CON UN FISHPLATE
+# TRAVEL2 NO ESTA RELACIONADO CON UN FISHPLATE
+# TRAVEL 3 ESTA RELACIONADO CON 2 FISHPLATES, UNO DE 5 Y OTRO DE 15
+    def testTravelKg(self):
+        travelList = Travel.objects.all()
+        diccionario = relateAISKg(travels=travelList)
+        minidic1 = diccionario[travelList[0].id]
+        assert minidic1["Kg"]==3
+        minidic2 = diccionario[travelList[1].id]
+        assert minidic2["Kg"]==0  
+        minidic3 = diccionario[travelList[2].id]
+        assert minidic3["Kg"]==10  
+        
+        
 
-    def testTravelWithoutKg(self):
-        pass
 
-    
+
+
 
 
 
