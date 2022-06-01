@@ -32,6 +32,20 @@ def TimeKgAIS(
             BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
             BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
         )
+        """
+        if ais_v is None:
+            aiss = AISVessel.objects.filter(
+                BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
+                BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
+            )
+        else:
+            
+            aiss = ais_v.filter(
+                BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
+                BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
+            )
+         
+        """   
         if not amount and not amount_of_ais:
             for ais in aiss:
                 # Search fish plates
