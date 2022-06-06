@@ -17,35 +17,69 @@
   </head>
   <body>
     <div id="map"></div>
+		{{ collection|json_script:"collection" }}
+		{{ type|json_script:"type" }}
+
     <script>
+			data = JSON.parse(document.getElementById('collection').textContent);
       mapboxgl.accessToken =
         'pk.eyJ1IjoibWFsLXdvb2QiLCJhIjoiY2oyZ2t2em50MDAyMzJ3cnltMDFhb2NzdiJ9.X-D4Wvo5E5QxeP7K_I3O8w';
+			/*
 			const map = new mapboxgl.Map({
 				container: 'map',
 				style: 'mapbox://styles/mapbox/streets-v11',
-				center: [-0.4801385175102711, 38.32622186697402],
 				zoom: 15
 			});
-
+		 */
+const map = new mapboxgl.Map({
+container: 'map', // container ID
+style: 'mapbox://styles/mapbox/dark-v10', // style URL
+center: [-0.4801385175102711, 38.32622186697402],
+zoom: 5 // starting zoom
+});
+ 
 map.on('load', () => {
-				map.addSource('route', {
-								'type' : 'geojson',
-								'data' : "{% static 'webgisapp/AIS_trace_route.csv.geojson' %}"
-							});
-							map.addLayer({
-								'id': 'route',
-								'type': 'line',
-								'source': 'route',
-								'layout': {
-									'line-join': 'round',
-									'line-cap': 'butt',
-								},
-								'paint': {
-									'line-color': ['get', 'color'],
-									'line-width': 3
-								}
-							});
-						});
-    </script>
+	// Add a data source containing GeoJSON data.
+	map.addSource('maine', {
+		'type': 'geojson',
+'data': data
+	//	'data': "{% static 'webgisapp/stateData.geojson' %}",
+	});
+	 
+	// Add a new layer to visualize the polygon.
+	map.addLayer({
+		'id': 'maine',
+		'type': 'fill',
+		'source': 'maine', // reference the data source
+		'layout': {},
+		'paint': {
+		'fill-opacity' : 0.7,
+		'fill-color': {
+			'property' : 'weight',
+			'stops': [
+				[0, '#ffffff'],
+				[10, '#DEF1F7'],
+				[20, '#CDEAF4'],
+				[30, '#9AD4EA'],
+				[40, '#6DC2E0'],
+				[50, '#46B1D8'],
+				[60, '#207897'],
+			]
+			}
+	}
+	});
+	// Add a black outline around the polygon.
+	map.addLayer({
+		'id': 'outline',
+		'type': 'line',
+		'source': 'maine',
+		'layout': {},
+		'paint': {
+		'line-color': '#ffffff',
+		'line-width': 1
+	}
+	});
+});
+		</script>
   </body>
 </html>

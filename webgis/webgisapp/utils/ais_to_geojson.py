@@ -22,7 +22,7 @@ colors = [
 ]
 
 
-def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
+def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False):
     """
     From a Vessel and AISVessel (Model) QuerySet creates
     a GeoJSON LineStringCollection
@@ -65,22 +65,53 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False):
             ais_array.append(ais_group.copy())
 
             for ais_g in ais_array:
-                f = Feature(
-                    # Guardamos posición geográfica
-                    geometry=Type([(AIS.LON, AIS.LAT) for AIS in ais_g]),
-                    properties={
-                        "MMSI": Vessel.MMSI,
-                        "VesselName": Vessel.VesselName,
-                        "Matricula": Vessel.Matricula,
-                        "Color": colors[color % len(colors)],
-                    },
-                )
+                if not Individual:
+                    f = Feature(
+                        # Guardamos posición geográfica
+                        geometry=Type([(AIS.LON, AIS.LAT) for AIS in ais_g]),
+                        properties={
+                            "MMSI": Vessel.MMSI,
+                            "VesselName": Vessel.VesselName,
+                            "Matricula": Vessel.Matricula,
+                            "Color": colors[color % len(colors)],
+                        },
+                    )
+                else:
+                    for AIS in ais_g:
+                        f = Feature(
+                            geometry=Type([(AIS.LON, AIS.LAT)]),
+                            properties={
+                                "MMSI": Vessel.MMSI,
+                                "VesselName": Vessel.VesselName,
+                                "Matricula": Vessel.VesselName,
+                                "LON": str(AIS.LON)[0:8],
+                                "LAT": str(AIS.LAT)[0:8],
+                                "COG": AIS.COG,
+                                "SOG": AIS.SOG,
+                                "BaseDateTime": AIS.BaseDateTime,
+                                "CallSign": AIS.CallSign,
+                                "VesselType": AIS.VesselType,
+                                "Length": AIS.Length,
+                                "VWidth": AIS.Width,
+                                "Cargo": AIS.Cargo,
+                                "TransceiverClass": AIS.TransceiverClass,
+                                "Color": colors[color % len(colors)],
+                            },
+                        )
+                        if Heat and len(travels) > 0:
+                            # TODO esta mal?
+                            f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
+                        elif Heat:
+                            f.properties["Weight"] = 0.0
+                        features.append(f)
                 # if Heat and len(travels) > 0 and travels[0].id in travel_dict:
-                if Heat and len(travels) > 0:
-                    f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
-                elif Heat:
-                    f.properties["Weight"] = 0.0
-                features.append(f)
+                if not Individual:
+                    if Heat and len(travels) > 0:
+                        # TODO esta mal?
+                        f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
+                    elif Heat:
+                        f.properties["Weight"] = 0.0
+                    features.append(f)
                 color += 1
     return FeatureCollection(features)
 

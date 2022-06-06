@@ -53,6 +53,7 @@ def Delete_None_Existing_Travels(travels=None):
             travel.delete()
 
 
+# TODO probar correcto funcionamiento
 def Comprobe_Outdated_Travels(travels=None):
     """
     Comprueba si los viajes están desactualizados.
