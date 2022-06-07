@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load static %}
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="{% static 'css/top_nav.css' %}">
+		<link rel="stylesheet" href="{% static 'css/left_bar.css' %}">
+
+		<!-- BOOTSTRAP -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+		<!-- MAPBOX -->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+		<!-- FONT AWESOME -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+
+			.dropdown-toggle::after {
+            content: none;
+        }
+    </style>
+	</head>
+	<body>
+		<!-------------------------- HEADER ---------------------------------->
+		<header class="p-3 bg-dark text-white">
+			<div class="container-fluid border-col">
+				<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+					<a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+						<svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+					</a>
+
+					<ul class="nav col-12 col-lg-auto col-md-8 col-sm-6 me-lg-auto mb-2 justify-content-center mb-md-0">
+						<li><a href="#" class="nav-link px-2 text-secondary text-white">Deepfish</a></li>
+					</ul>
+					<div class="text-end">
+						<div class="flex-shrink-0 dropdown">
+							<a class="nav-link dropdown-toggle show" href="#" id="dropdown06" data-bs-toggle="dropdown" aria-expanded="true">
+								Dropdown
+							</a>
+						<ul class="dropdown-menu show" aria-labelledby="dropdown06" data-bs-popper="static">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+	<main class="d-flex flex-nowrap">
+		<!--------------------------------------------- LATERAL OFFCANVAS ---------------------------------------------------------->
+		<div class="offcanvas offcanvas-start bg-dark text-white" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+				<button type="button" class="btn btn-primary" style="color: white; position: absolute; left: 401px; top: 50%;" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa fa-angle-left"></i></button>
+			<div class="offcanvas-body" style="padding-left: 0px; padding-right:0px; padding-top: 0px;">
+				<img id="vessel_picture" style="width:100; height:auto" class="img-fluid" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.gannett-cdn.com%2F-mm-%2F023895d6d8637785395c6009d739d1234711f23d%2Fc%3D0-234-4608-2837%2Flocal%2F-%2Fmedia%2F2016%2F10%2F03%2FUSATODAY%2FUSATODAY%2F636110981736578798-NWP23to26-262.JPG%3Fwidth%3D3200%26height%3D1808%26fit%3Dcrop%26format%3Dpjpg%26auto%3Dwebp&f=1&nofb=1" alt=""> 
+		 			<ul class="nav nav-pills flex-column mb-auto"> 
+		 				<li id="mmsi-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+							MMSI: 
+		 				</li>
+		 				<li id="vesselname-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					Vessel Name: {{ VesselName }}
+		 				</li>
+		 				<li id="matricula-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					Matricula: {{ Matricula }}
+		 				</li>
+		 				<li id="lonlat-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					<!-- LON: {{ LON }}, LAT: {{ LAT }} -->
+		 				</li>
+		 				<li id="cogsog-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					<!-- COG: {{ COG }}, SOG: {{ SOG }} -->
+		 				</li>
+		 				<li id="date-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					<!-- BaseDateTime: {{ BaseDateTime }} -->
+		 				</li>
+		 				<li id="callsign-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					CallSign: {{ CallSign }}
+		 				</li>
+		 				<li id="type-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					Vessel Type: {{ VesselType }}
+		 				</li>
+		 				<li id="length-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					Lenght: {{ Length }}
+		 				</li>
+		 				<li id="width-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					Width: {{ Width }}
+		 				</li>
+		 				<li id="cargo-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					Cargo: {{ Cargo }}
+		 				</li>
+		 				<li id="transceiver-lateral" class="nav-item" style="text-align:left; margin-left:3px">
+		 					Transceiver Class: {{ TransceiverClass }}
+		 				</li>
+		 			</ul> 
+					<div style="position: absolute; bottom: 8px; left: 16px; width: 300px">
+						<hr>
+						<div class="dropdown" >
+							<a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+								<img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+								<strong class="text-white">Sebastian Pasker</strong>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+								<li><a class="dropdown-item" href="#">New project...</a></li>
+								<li><a class="dropdown-item" href="#">Settings</a></li>
+								<li><a class="dropdown-item" href="#">Profile</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="#">Sign out</a></li>
+							</ul>
+						</div>
+					</div>
+			</div>
+		</div>
+		<div class="col">
+		<!-------------------------------------------------------- RIGHT EXPAND CANVAS BUTTON ------------------------------>
+			<button class="btn btn-primary" type="button" style="position:absolute; left:3px; top:50%; z-index:2;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><i class="fa fa-angle-right"></i></button>
+		<!-------------------------------------------------------- MAP SWAP BUTTON  ------------------------------>
+			<div class="container-fluid" style="position: absolute; z-index: 2; top: 87.5%; left: 94.0%">
+				<a href="{% url 'index2' %}">
+				<img id="map_icon" class="img-fluid;" src="{% static 'img/map_2.png' %}" style="border-radius:5px; border: 2px solid white;" width="100px" height="100px">
+				</a>
+			</div>
+		<div class="container-fluid" style="position: relative; z-index: 2;">
+		<!-------------------------------------------------------- FILTER DROPDOWN  ------------------------------>
+				<div class="container">
+					<div class="container-fluid">
+						<div class="btn-group dropleft dropdown-filter" style="position: absolute; left: 96.5%; z-index:2; margin-top:5px">
+							<button type="button" class="nav-link btn btn-primary dropdown-toggle show" id="dropdown06" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="fa fa-filter text-white"></i>
+							</button>
+							<ul class="dropdown-menu show" aria-labelledby="dropdown06" data-bs-popper="static">
+								<li><a class="dropdown-item" href="#">Action</a></li>
+								<li><a class="dropdown-item" href="#">Another action</a></li>
+								<li><a class="dropdown-item" href="#">Something else here</a></li>
+							</ul>
+						</div>
+					</div>
+			<!-------------------------------------------------------- SEARCH BUTTON  ------------------------------>
+					<button class="btn btn-primary" type="button" style="position: absolute; z-index: 3; left: 50%; margin-top:5px" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+						<i class="fa fa-search"></i>
+					</button>
+					<div class="collapse" id="collapseExample">
+						<div class="card card-body bg-dark text-white" style="postion: absolute; top:50px; border: 1px solid gray">
+							<!------------------------- FORM ------------------------------------->
+								<div class="row" style="margin-top: 5px">
+									<div class="col-3">
+										<select id="select_1" class="form-select">
+											<option value="mmsi">MMSI</option>
+											<option value="fecha_inicio">Fecha inicio</option>
+											<option value="fecha_fin">Fecha fin</option>
+											<option value="talla">Talla</option>
+											<option value="especie">Especie</option>
+										</select>
+									</div>
+									<div class="col-6">
+										<input type="text" class="form-control" id="text_input_1" >
+									</div>
+										<div class="col-3">
+											<form class="text-black" id="form" style="border-radius: 5px; border:1px" method="POST" action="/webgisapp/">
+												{% csrf_token %} 
+												{% for field in form %}
+													{{ field.as_hidden }}
+												{% endfor %}
+														<input id="submit_button" type="submit" class="btn btn-secondary btn-md" onclick="set_form_values" value="Search">
+											</form>
+										</div>
+								</div>
+								<div id="row_form_1" class="row" style="display: none !important">
+									<div class="col-3">
+									<select id="select_2" class="form-select">
+										<option value="mmsi">MMSI</option>
+										<option value="fecha_inicio">Fecha inicio</option>
+										<option value="fecha_fin">Fecha fin</option>
+										<option value="talla">Talla</option>
+										<option value="especie">Especie</option>
+									</select>
+									</div>
+									<div class="col-9">
+										<input type="text" class="form-control" id="text_input_2" >
+									</div>
+								</div>
+								<div id="row_form_2" class="row" style="display: none !important">
+									<div class="col-3">
+									<select id="select_3" class="form-select">
+										<option value="mmsi">MMSI</option>
+										<option value="fecha_inicio">Fecha inicio</option>
+										<option value="fecha_fin">Fecha fin</option>
+										<option value="talla">Talla</option>
+										<option value="especie">Especie</option>
+									</select>
+									</div>
+									<div class="col-9">
+										<input type="text" class="form-control" id="text_input_3" >
+									</div>
+								</div>
+								<div id="row_form_3" class="row" style="display: none !important">
+									<div class="col-3">
+									<select id="select_4" class="form-select">
+										<option value="mmsi">MMSI</option>
+										<option value="fecha_inicio">Fecha inicio</option>
+										<option value="fecha_fin">Fecha fin</option>
+										<option value="talla">Talla</option>
+										<option value="especie">Especie</option>
+									</select>
+									</div>
+									<div class="col-9">
+										<input type="text" class="form-control" id="text_input_4" >
+									</div>
+								</div>
+								<div id="row_form_4" class="row" style="display: none !important">
+									<div class="col-3">
+									<select id="select_5" class="form-select">
+										<option value="mmsi">MMSI</option>
+										<option value="fecha_inicio">Fecha inicio</option>
+										<option value="fecha_fin">Fecha fin</option>
+										<option value="talla">Talla</option>
+										<option value="especie">Especie</option>
+									</select>
+									</div>
+									<div class="col-9">
+										<input type="text" class="form-control" id="text_input_5" >
+									</div>
+								</div>
+								<div class="row" style="margin-top: 10px">
+									<div class="col-4">
+										<button id="buttonfunction" class="btn-sm btn-primary" style="border-radius: 5px" type="button">
+											<i class="fa fa-plus"></i>
+										</button>
+										<script>
+											let id = 1;
+											document.getElementById("submit_button").onclick = function() {
+													for(let i=1; i<6; i++) {
+														document.getElementById("id_select_" + i).value = document.getElementById("select_" + i).value;
+														document.getElementById("id_text_input_" + i).value = document.getElementById('text_input_' + i).value;
+													}
+											}
+											document.getElementById("buttonfunction").onclick = function () { 
+												document.getElementById("row_form_" + id).setAttribute('style', 'margin-top:10px; display: flex;');
+												if (id == 4) {
+													document.getElementById("buttonfunction").setAttribute('style', 'display: none !important;');
+												} else {
+													id = id + 1;
+												}
+											};
+										</script>
+									</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="map" style="box-sizing: content-box; margin-top:72px; z-index:1"></div> 
+		</div>
+	</div>
+		{{ collection|json_script:"collection" }}
+		{{ type|json_script:"type" }}
+
+    <script>
+			data = JSON.parse(document.getElementById('collection').textContent);
+      mapboxgl.accessToken =
+        'pk.eyJ1IjoibWFsLXdvb2QiLCJhIjoiY2oyZ2t2em50MDAyMzJ3cnltMDFhb2NzdiJ9.X-D4Wvo5E5QxeP7K_I3O8w';
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v10',
+        center: [-0.28634550125236236, 38.03759971570147],
+        zoom: 10 
+      });
+      map.on('load', () => {
+        map.addSource('vessels', {
+          'type': 'geojson',
+								'data': data 
+        });
+
+        map.addLayer(
+          {
+            'id': 'vessels-heat',
+            'type': 'heatmap',
+            'source': 'vessels',
+            'maxzoom': 15,
+            'paint': {
+              // increase weight as diameter breast height increases
+              'heatmap-weight': {
+                'property': 'Weight',
+                'type': 'exponential',
+                'stops': [
+                  [1, 0],
+                  [62, 1]
+                ]
+              },
+              // increase intensity as zoom level increases
+              'heatmap-intensity': {
+                'stops': [
+                  [11, 1],
+                  [15, 3]
+                ]
+              },
+              // use sequential color palette to use exponentially as the weight increases
+              'heatmap-color': [
+                'interpolate',
+                ['linear'],
+                ['heatmap-density'],
+                0,
+//                'rgba(236,222,239,0)',
+                'rgba(255,255,255,0)',
+                0.2,
+                'rgb(93, 163, 253)',
+                0.4,
+                'rgb(5, 111, 252)',
+                0.6,
+                'rgb(1, 53, 121)',
+                0.8,
+                'rgb(28,144,153)'
+              ],
+              // increase radius as zoom increases
+              'heatmap-radius': {
+                'stops': [
+                  [11, 15],
+                  [15, 20]
+                ]
+              },
+              // decrease opacity to transition into the circle layer
+              'heatmap-opacity': {
+                'default': 1,
+                'stops': [
+                  [14, 1],
+                  [15, 0]
+                ]
+              }
+            }
+          },
+          'waterway-label'
+        );
+
+        map.addLayer(
+          {
+            'id': 'vessels-point',
+            'type': 'circle',
+            'source': 'vessels',
+            'minzoom': 14,
+            'paint': {
+              // increase the radius of the circle as the zoom level and dbh value increases
+              'circle-radius': {
+                'property': 'Weight',
+                'type': 'exponential',
+                'stops': [
+                  [{ zoom: 15, value: 20 }, 5],
+                  [{ zoom: 15, value: 80 }, 10],
+                  [{ zoom: 22, value: 20 }, 20],
+                  [{ zoom: 22, value: 80 }, 50]
+                ]
+              },
+              'circle-color': {
+                'property': 'Weight',
+                'type': 'exponential',
+                'stops': [
+                  [0, 'rgba(255,255,255,0)'],
+                  [10, 'rgb(93, 163, 253)'],
+                  [20, 'rgb(5, 111, 252)'],
+                  [30, 'rgb(2, 80, 182)'],
+                  [40, 'rgb(1, 53, 121)'],
+                  [50, 'rgb(28,144,153)'],
+                  [60, 'rgb(1,108,89)']
+                ]
+              },
+              'circle-stroke-color': 'white',
+              'circle-stroke-width': 1,
+              'circle-opacity': {
+                'stops': [
+                  [14, 0],
+                  [15, 1]
+                ]
+              }
+            }
+          },
+          'waterway-label'
+        );
+      });
+
+			map.on('click', (event) => {
+				const features = map.queryRenderedFeatures(event.point, {
+					layers: ['vessels-point']
+				});
+
+				if (!features.length) {
+					return;
+				}
+
+			const feature = features[0];
+
+			document.getElementById("mmsi-lateral").innerHTML = "MMSI: " + feature.properties.MMSI;
+			document.getElementById("vesselname-lateral").innerHTML = "Vessel name: " + feature.properties.VesselName;
+			document.getElementById("matricula-lateral").innerHTML = "Matricula: " + feature.properties.Matricula;
+			document.getElementById("lonlat-lateral").innerHTML = "LON: " + feature.properties.LON + " LAT: " + feature.properties.LAT;
+			document.getElementById("cogsog-lateral").innerHTML = "COG: " + feature.properties.COG + " SOG: " + feature.properties.SOG;
+			document.getElementById("date-lateral").innerHTML = "BaseDateTime: " + feature.properties.BaseDateTime;
+			document.getElementById("type-lateral").innerHTML = "Vessel type: " + feature.properties.VesselType;
+			document.getElementById("length-lateral").innerHTML = "Length: " + feature.properties.Length + " m";
+			document.getElementById("width-lateral").innerHTML = "Width: " + feature.properties.VWidth + " m";
+			document.getElementById("cargo-lateral").innerHTML = "Cargo: " + feature.properties.Cargo;
+			document.getElementById("transceiver-lateral").innerHTML = "Transceiver class: " + feature.properties.TransceiverClass;
+			document.getElementById("callsign-lateral").innerHTML = "Callsign: " + feature.properties.CallSign;
+
+			 
+			const popup = new mapboxgl.Popup({ offset: [0, -15] })
+				.setLngLat(feature.geometry.coordinates)
+				.setHTML(
+					`<h3>${feature.properties.MMSI}</h3><p></p>`
+				)
+				.addTo(map);
+			});
+
+
+    </script>
+		</main>
+	</body>
+</html>

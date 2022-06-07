@@ -53,6 +53,7 @@ def Delete_None_Existing_Travels(travels=None):
             travel.delete()
 
 
+# TODO probar correcto funcionamiento
 def Comprobe_Outdated_Travels(travels=None):
     """
     Comprueba si los viajes están desactualizados.
@@ -74,7 +75,7 @@ def Comprobe_Outdated_Travels(travels=None):
 
 def Comprobe_Possible_Join_Travels(aiss=None, plates=None, vessels=None):
     """
-    Comprueba si existen viajes existentes sin añadir a la base de datos.
+    Comprueba si existen viajes existentes sin añadir a la base de datos y los guarda.
     """
     """
     TODO HE MODIFICADO ALGUNAS VARIABLES YA QUE SALÍA ERROR POR EL ORDEN

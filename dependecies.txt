@@ -7,3 +7,4 @@ geojson
 pyqt5
 mpld3
 pytest
+pytest-django

@@ -1,4 +1,4 @@
-from webgisapp.models import AISVessel, Vessel, Plate
+from webgisapp.models import AISVessel, Vessel, Plate, Travel
 
 
 def allAIS():
@@ -11,6 +11,10 @@ def allVessels():
 
 def allPlates():
     return Plate.objects.all()
+
+
+def allTravels():
+    return Travel.objects.all()
 
 
 # def comparison(func, *args):

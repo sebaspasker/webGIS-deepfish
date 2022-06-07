@@ -2,6 +2,7 @@ import pytest
 from datetime import datetime, timedelta
 from geojson import Point, LineString, MultiPoint, Feature, FeatureCollection
 from .setups import setupTestDeleteTravel
+from .setups import setupTestComprobeOutdatedTravel
 from webgisapp.utils.join_travel import *
 from webgisapp.utils.abbr import *
 from webgisapp.utils.exceptions import *
@@ -60,3 +61,19 @@ class TestDeleteTravel:
     def testDeleteNoneTravel(self):
         Delete_None_Existing_Travels()
         assert len(Travel.objects.all()) == 2
+
+
+class TestComprobeOutdatedTravel:
+    pytestmark = pytest.mark.django_db
+
+    def setup(self):
+        setupTestComprobeOutdatedTravel(self)
+
+    def testNotOutdated(self):
+        # TODO debería de devolver un falso si está actualizado
+        assert TestComprobeOutdatedTravel() == False
+
+    def testEmptyOutdated(self):
+        for travel in Travel.objects.all():
+            travel.delete()
+        assert Comprobe_Outdated_Travels() == True

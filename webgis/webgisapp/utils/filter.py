@@ -12,10 +12,6 @@ def Filter_Route(MMSI=None, date_from=None, date_to=None, talla=None, pez=None):
     Y mete un filtrado en la base de datos en base a esos parámetros.
     """
     null_q = []
-    if (isinstance(MMSI, str) and len(MMSI) == 0) or (
-        isinstance(pez, str) and len(pez) == 0
-    ):
-        raise EmptyVarException
     for var in [
         MMSI,
         date_from,
@@ -84,7 +80,7 @@ def Filter_Type(TypeStr, v, ais):
     Input: String
     Output: FeatureCollection, String, String
     """
-    route = "webgisapp/maproute_search.html"
+    route = "webgisapp/map/map_index.html"
     if TypeStr == "Line":
         collection = AISQuery_To_Collection(v, ais, LineString)
         typee = "line"
@@ -95,9 +91,9 @@ def Filter_Type(TypeStr, v, ais):
         collection = AISQuery_To_Collection(v, ais, LineString)
         typee = "pointandline"
     elif TypeStr == "Heat":
-        collection = AISQuery_To_Collection(v, ais, MultiPoint, True)
+        collection = AISQuery_To_Collection(v, ais, MultiPoint, True, True)
         typee = "heat"
-        route = "webgisapp/maproutes/heat.html"
+        route = "webgisapp/map/map_index.html"
     elif TypeStr is not None and not isinstance(TypeStr, str):
         raise InstanceTypeException
     elif TypeStr is None or len(TypeStr) == 0:
@@ -105,3 +101,26 @@ def Filter_Type(TypeStr, v, ais):
     else:
         raise IncorrectOptionException
     return collection, route, typee
+
+
+def filterDictForm(dictform):
+    mmsi = None
+    date_from = None
+    date_to = None
+    talla = None
+    especie = None
+    for i in range(1, 6):
+        text_input = dictform["text_input_" + str(i)]
+        if not "".__eq__(text_input):
+            option = dictform["option_" + str(i)]
+            if option == "mmsi":
+                mmsi = text_input
+            elif option == "fecha_inicio":
+                date_from = text_input
+            elif option == "fecha_fin":
+                date_to = text_input
+            elif option == "talla":
+                talla = text_input
+            elif option == "especie":
+                especie = text_input
+    return mmsi, date_from, date_to, talla, especie
