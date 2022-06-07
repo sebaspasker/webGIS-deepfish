@@ -500,3 +500,450 @@ def setupFilterRoute(self):
         Cantidad=2,
         Peso=2,
     )
+
+
+def setupComprobePossibleJoinTravel(self):
+
+    
+    self.v1 = Vessel.objects.create(
+        MMSI="123456789", VesselName="Juan", Matricula="M123"
+    )
+
+    self.v2 = Vessel.objects.create(
+        MMSI="987654321", VesselName="Jorge", Matricula="A321"
+    )
+
+    date = datetime.datetime.now()
+    self.ais1 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=date,
+        LAT=1,
+        LON=1,
+        SOG=1,
+        COG=1,
+        VesselName=self.v1.VesselName,
+        CallSign="ABC",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.ais2 = AISVessel.objects.create(
+        MMSI=self.v2,
+        BaseDateTime=date,
+        LAT=1,
+        LON=1,
+        SOG=1,
+        COG=1,
+        VesselName=self.v2.VesselName,
+        CallSign="ABC",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.plate1 = Plate.objects.create(
+        Lote="ABC",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB",
+        Fecha_Inicio=date - timedelta(minutes=5),
+        Fecha_Fin=date + timedelta(minutes=5),
+        Nombre_Pez_Bandeja=date + timedelta(minutes=5),
+        Kg_Bandeja=2,
+    )
+
+    self.plate2 = Plate.objects.create(
+        Lote="CBD",
+        Matricula=self.v2,
+        Puerto="Torrevieja",
+        Zona_Captura="AB",
+        Fecha_Inicio=date - timedelta(minutes=5),
+        Fecha_Fin=date + timedelta(minutes=5),
+        Nombre_Pez_Bandeja=date + timedelta(minutes=5),
+        Kg_Bandeja=2,
+    )
+
+    self.travel1 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate1
+    )
+    
+    self.travel2 = Travel.objects.create(
+        AIS_fk=self.ais2, Vessel_fk=self.v2, Plate_fk=self.plate2
+    )
+    
+
+def setupRelateAISKg(self):
+    self.p = Fish.objects.create(Nombre_Cientifico="Pez1", Nombre_Comercial="Pez1")
+    self.p1 = Fish.objects.create(Nombre_Cientifico="Pez2", Nombre_Comercial="Pez2")
+
+    self.v1 = Vessel.objects.create(MMSI="ABCDEF", VesselName="Juan", Matricula="Buque")
+    time_init = datetime.datetime.now()
+    self.ais1 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init,
+        LAT=1,
+        LON=1,
+        SOG=1,
+        COG=1,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.ais2 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init,
+        LAT=2,
+        LON=2,
+        SOG=2,
+        COG=2,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.plate1 = Plate.objects.create(
+        Lote="Lote1",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=3,
+    )
+
+    self.plate2 = Plate.objects.create(
+        Lote="Lote2",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=3,
+    )
+
+    self.plate3 = Plate.objects.create(
+        Lote="Lote3",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=20,
+    )
+
+    self.fish_plate = Fish_Plate.objects.create(
+        Lote=self.plate1,
+        Nombre_Cientifico=self.p,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=3,
+    )
+
+    self.fish_plate2 = Fish_Plate.objects.create(
+        Lote=self.plate3,
+        Nombre_Cientifico=self.p,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=5,
+    )
+
+    self.fish_plate3 = Fish_Plate.objects.create(
+        Lote=self.plate3,
+        Nombre_Cientifico=self.p1,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=15,
+    )
+
+    self.travel1 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate1
+    )
+
+    self.travel2 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate2
+    )
+
+    self.travel3 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate3
+    )
+    
+
+def setupPlotController(self):
+
+    self.v1 = Vessel.objects.create(MMSI="ABCDEF", VesselName="Juan", Matricula="Buque")
+    time_init = datetime.datetime.now()
+    self.ais1 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init,
+        LAT=1,
+        LON=1,
+        SOG=1,
+        COG=1,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.ais2 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init,
+        LAT=2,
+        LON=2,
+        SOG=2,
+        COG=2,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.plate1 = Plate.objects.create(
+        Lote="Lote1",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=2,
+    )
+
+
+    self.travel1 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate1
+    )
+
+
+def setupBarPlotData(self):
+
+    self.v1 = Vessel.objects.create(MMSI="ABCDEF", VesselName="Juan", Matricula="Buque")
+    time_init = datetime.datetime.now()
+    self.ais1 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init,
+        LAT=1,
+        LON=1,
+        SOG=1,
+        COG=1,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.ais2 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init,
+        LAT=2,
+        LON=2,
+        SOG=2,
+        COG=2,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.plate1 = Plate.objects.create(
+        Lote="Lote1",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=2,
+    )
+
+
+    self.travel1 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate1
+    )
+
+
+
+def setupTimeKgAIS(self):
+    self.p = Fish.objects.create(Nombre_Cientifico="Pez1", Nombre_Comercial="Pez1")
+    self.p1 = Fish.objects.create(Nombre_Cientifico="Pez2", Nombre_Comercial="Pez2")
+
+    self.v1 = Vessel.objects.create(MMSI="ABCDEF", VesselName="Juan", Matricula="Buque")
+    self.v2 = Vessel.objects.create(MMSI="DEFGHI", VesselName="Juan2", Matricula="Buque2")
+    time_init = datetime.datetime.now()-timedelta(days=1)
+    time_init2 = datetime.datetime.now()-timedelta(days=10)
+    self.ais1 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init,
+        LAT=1,
+        LON=1,
+        SOG=1,
+        COG=1,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.ais2 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init2,
+        LAT=2,
+        LON=2,
+        SOG=2,
+        COG=2,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.ais3 = AISVessel.objects.create(
+        MMSI=self.v1,
+        BaseDateTime=time_init,
+        LAT=1,
+        LON=1,
+        SOG=1,
+        COG=1,
+        VesselName="Juan",
+        CallSign="12",
+        VesselType=1,
+        Status=1,
+        Length=1,
+        Width=1,
+        Cargo=1,
+        TransceiverClass="A",
+    )
+
+    self.plate1 = Plate.objects.create(
+        Lote="Lote1",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=3,
+    )
+
+    self.plate2 = Plate.objects.create(
+        Lote="Lote2",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=3,
+    )
+
+    self.plate3 = Plate.objects.create(
+        Lote="Lote3",
+        Matricula=self.v1,
+        Puerto="Campello",
+        Zona_Captura="AB1",
+        Fecha_Inicio=time_init,
+        Fecha_Fin=time_init + timedelta(minutes=5),
+        Nombre_Pez_Bandeja="Bonito como tu",
+        Kg_Bandeja=20,
+    )
+
+    self.fish_plate = Fish_Plate.objects.create(
+        Lote=self.plate1,
+        Nombre_Cientifico=self.p,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=3,
+    )
+
+    self.fish_plate2 = Fish_Plate.objects.create(
+        Lote=self.plate3,
+        Nombre_Cientifico=self.p,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=5,
+    )
+
+    self.fish_plate3 = Fish_Plate.objects.create(
+        Lote=self.plate3,
+        Nombre_Cientifico=self.p1,
+        Talla_cm=3,
+        Cantidad=3,
+        Peso=15,
+    )
+
+    self.travel1 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate1
+    )
+
+    self.travel2 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v1, Plate_fk=self.plate2
+    )
+
+    self.travel3 = Travel.objects.create(
+        AIS_fk=self.ais1, Vessel_fk=self.v2, Plate_fk=self.plate3
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

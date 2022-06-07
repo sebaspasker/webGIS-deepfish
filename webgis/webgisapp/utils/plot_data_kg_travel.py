@@ -32,12 +32,26 @@ def TimeKgAIS(
             BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
             BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
         )
+        """
+        if ais_v is None:
+            aiss = AISVessel.objects.filter(
+                BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
+                BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
+            )
+        else:
+            
+            aiss = ais_v.filter(
+                BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
+                BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
+            )
+         
+        """   
         if not amount and not amount_of_ais:
             for ais in aiss:
                 # Search fish plates
                 travels = Travel.objects.filter(AIS_fk=ais)
                 if Comprobe_Outdated_Travels(travels):
-                    Delete_Non_Existing_Travels(travels)
+                    Delete_None_Existing_Travels(travels)
 
                 if specie:
                     if "".__eq__(
@@ -131,3 +145,19 @@ def BarPlotData(data, output_path, xlabel="", ylabel=""):
     html_file = open(output_path, "w")
     html_file.write(html_str)
     html_file.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
