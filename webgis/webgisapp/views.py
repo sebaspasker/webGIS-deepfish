@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, HttpResponseNotFound
+from flask import json
 from .forms import SearchForm, SearchIndexForm
 from webgisapp.models import AISVessel, Vessel
 from webgisapp.utils.filter import Filter_Route, Filter_Type, filterDictForm
@@ -108,6 +109,47 @@ def index2(request):
     )
 
 
+def index3(request):
+    start_tuple, end_tuple = search_min_max_ais()
+    print(start_tuple, end_tuple)
+    return render(
+        request,
+        "webgisapp/map/map_index3.html",
+        {
+            "collection": polygon_mile_geojson(
+                start_tuple,
+                end_tuple
+                # (-0.45332507935470845, 38.338489735664446),
+                # (-0.39798242386968524, 38.3145996069299),
+            ),
+        },
+    )
+
+
+def plotpage(request, option):
+    input_option = 4
+    if option == 1:
+        input_option = 1
+    elif option == 2:
+        input_option = 4
+    elif option == 3:
+        input_option = 5
+    data_keys, data_values, y = PlotController(
+        input_option,
+        datetime.now() - timedelta(days=1),
+        datetime.now() + timedelta(days=5),
+    )
+    return render(
+        request,
+        "webgisapp/map/map_plot.html",
+        {
+            "labels": [x.strftime("%Y-%m-%d") for x in list(data_keys)],
+            "data": json.dumps(list(data_values)),
+            "y": y,
+        },
+    )
+
+
 # Mapa de rutas de tres rutas mmsi ejemplmv
 def maproute(request):
     start_tuple, end_tuple = search_min_max_ais()
@@ -162,13 +204,13 @@ def search(request):
         return render(request, "webgisapp/form.html", {"form": form})
 
 
-def plotpage(request):
-    # Vemos los datos que queremos representar y
-    # lo escribimos en plot.html
-    PlotController(
-        5, datetime.now() - timedelta(days=4), datetime.now() + timedelta(days=5)
-    )
-    return render(request, "webgisapp/plot_page.html")
+# def plotpage(request):
+#     # Vemos los datos que queremos representar y
+#     # lo escribimos en plot.html
+#     PlotController(
+#         5, datetime.now() - timedelta(days=4), datetime.now() + timedelta(days=5)
+#     )
+#     return render(request, "webgisapp/plot_page.html")
 
 
 def maproutefilter(request):

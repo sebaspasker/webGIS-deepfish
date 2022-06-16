@@ -1,10 +1,11 @@
 from datetime import timedelta
 from django.db.models.query import QuerySet
 from .exceptions import *
-from webgisapp.models import AISVessel, Vessel, Travel
 from geojson import FeatureCollection, Feature, LineString, Point
-from .weight_kg_generator import relateAISKg
 from .join_travel import Delete_None_Existing_Travels, Comprobe_Outdated_Travels
+from random import randrange
+from webgisapp.models import AISVessel, Vessel, Travel
+from .weight_kg_generator import relateAISKg
 
 colors = [
     "#fe0000",  # Red
@@ -74,6 +75,7 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                             "VesselName": Vessel.VesselName,
                             "Matricula": Vessel.Matricula,
                             "Color": colors[color % len(colors)],
+                            "Image": Vessel.Image,
                         },
                     )
                 else:
@@ -83,7 +85,8 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                             properties={
                                 "MMSI": Vessel.MMSI,
                                 "VesselName": Vessel.VesselName,
-                                "Matricula": Vessel.VesselName,
+                                "Matricula": Vessel.Matricula,
+                                "Image": Vessel.Image,
                                 "LON": str(AIS.LON)[0:8],
                                 "LAT": str(AIS.LAT)[0:8],
                                 "COG": AIS.COG,
@@ -100,7 +103,8 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                         )
                         if Heat and len(travels) > 0:
                             # TODO esta mal?
-                            f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
+                            # f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
+                            f.properties["Weight"] = randrange(0, 30)
                         elif Heat:
                             f.properties["Weight"] = 0.0
                         features.append(f)

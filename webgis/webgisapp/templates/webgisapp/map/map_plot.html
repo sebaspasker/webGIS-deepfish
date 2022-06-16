@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load static %}
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="{% static 'css/top_nav.css' %}" />
+		<link rel="stylesheet" href="{% static 'css/plot_page.css' %}" />
+
+		<!-- BOOTSTRAP -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+		<!-- MAPBOX -->
+		<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+		<link
+			href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
+			rel="stylesheet"
+		/>
+
+		<!-- FONT AWESOME -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+		/>
+
+		<!-- GOOGLE FONTS -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
+			rel="stylesheet"
+		/>
+
+		<!-- CHART JS PLOTS -->
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+		<style>
+			.dropdown-toggle::after {
+				content: none;
+			}
+		</style>
+	</head>
+	<body>
+		<!-------------------------- HEADER ---------------------------------->
+		<header
+			class="p-3 bg-dark text-white"
+			style="background-color: grey !important"
+		>
+			<div class="container-fluid border-col">
+				<div
+					class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+				>
+					<a
+						href="/"
+						class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
+					>
+						<svg
+							class="bi me-2"
+							width="40"
+							height="32"
+							role="img"
+							aria-label="Bootstrap"
+						>
+							<use xlink:href="#bootstrap"></use>
+						</svg>
+					</a>
+
+					<ul
+						class="nav col-12 col-lg-auto col-md-8 col-sm-6 me-lg-auto mb-2 justify-content-center mb-md-0"
+					>
+						<li>
+							<a
+								href="{% url 'index' %}"
+								class="nav-link px-2 text-secondary text-white"
+							>
+								<!--
+								<img
+									id="map_icon"
+									class="img-fluid;"
+									src="{% static 'img/logo.png' %}"
+									height="40px"
+									/> -->
+								Deepfish
+							</a>
+						</li>
+					</ul>
+					<div class="text-end">
+						<div class="flex-shrink-0 dropdown">
+							<a
+								class="nav-link dropdown-toggle"
+								href="#"
+								id="dropdown06"
+								data-bs-toggle="dropdown"
+								aria-expanded="true"
+							>
+								<i class="fa fa-angle-down" style="color: white"></i>
+							</a>
+							<ul
+								class="dropdown-menu"
+								aria-labelledby="dropdown06"
+								data-bs-popper="static"
+							>
+								<li>
+									<a class="dropdown-item" href="{% url 'index' %}">Heat Map</a>
+								</li>
+								<li>
+									<a class="dropdown-item" href="{% url 'index2' %}"
+										>Route Map</a
+									>
+								</li>
+								<li>
+									<a class="dropdown-item" href="{% url 'plotpage' 1 %}"
+										>Stats</a
+									>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+		<main class="d-flex bg-light flex-nowrap">
+			<div class="container-fluid">
+				<div class="row">
+					<div
+						class="col-3 col-md-3 col-sm-2 align-self-center"
+						style="padding-left: 50px"
+					>
+						<div class="square-data rounded">
+							<div id="kg_fish" class="text-square">86</div>
+							<div class="text-square-sub">Kgs of fish</div>
+							<div class="text-square-sub-sub">(today)</div>
+						</div>
+					</div>
+					<div class="col-3 col-md-3 col-sm-2 align-self-center">
+						<div class="square-data rounded">
+							<div id="num_vessels" class="text-square">15</div>
+							<div class="text-square-sub" style="left: 95px">Vessels</div>
+							<div class="text-square-sub-sub" style="left: 95px">
+								(connected)
+							</div>
+						</div>
+					</div>
+					<div class="col-3 col-md-3 col-sm-2 align-self-center">
+						<div class="square-data rounded">
+							<div id="temperature" class="text-square">32º</div>
+							<div class="text-square-sub" style="left: 65px">Temperature</div>
+							<div class="text-square-sub-sub">(Alicante)</div>
+						</div>
+					</div>
+					<div class="col-3 col-md-3 col-sm-2 align-self-center">
+						<div class="square-data rounded">
+							<div id="wind" class="text-square">74</div>
+							<div class="text-square-sub" style="left: 110px">Wind</div>
+							<div class="text-square-sub-sub">(Alicante)</div>
+						</div>
+					</div>
+				</div>
+				<div class="container-fluid" style="padding-top: 10px">
+					<div
+						class="flex-shrink-0 dropdown"
+						style="
+							position: absolute;
+							border: 1px solid gray;
+							border-radius: 5px;
+						"
+					>
+						<a
+							class="nav-link dropdown-toggle"
+							href="#"
+							id="dropdown06"
+							data-bs-toggle="dropdown"
+							aria-expanded="true"
+							style="color: gray"
+						>
+							Option
+						</a>
+						<ul
+							class="dropdown-menu"
+							aria-labelledby="dropdown06"
+							data-bs-popper="static"
+						>
+							<li>
+								<a class="dropdown-item" href="{% url 'plotpage' 1 %}"
+									>Kgs of fish</a
+								>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{% url 'plotpage' 2 %}"
+									>Number of vessels</a
+								>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{% url 'plotpage' 3 %}"
+									>Number of AIS</a
+								>
+							</li>
+						</ul>
+					</div>
+					<div style="padding-top: 50px">
+						<canvas id="myChart" style="width: 400px; height: 100px"></canvas>
+						<script>
+							function sleep(ms) {
+								return new Promise((resolve) => setTimeout(resolve, ms));
+							}
+
+							async function changeKg() {
+								while (true) {
+									await sleep(Math.floor(Math.random() * 10000) + 5000);
+									document.getElementById("kg_fish").innerHTML =
+										86 + Math.floor(Math.random() * 5) + 1;
+								}
+							}
+
+							async function changeVessels() {
+								while (true) {
+									await sleep(Math.floor(Math.random() * 7000) + 3000);
+									document.getElementById("num_vessels").innerHTML =
+										15 + Math.floor(Math.random() * 5);
+								}
+							}
+
+							async function changeTemperature() {
+								while (true) {
+									await sleep(Math.floor(Math.random() * 5000) + 1000);
+									document.getElementById("temperature").innerHTML =
+										30 + Math.floor(Math.random() * 2) + "º";
+								}
+							}
+
+							async function changeWind() {
+								while (true) {
+									await sleep(Math.floor(Math.random() * 5000) + 1000);
+									document.getElementById("wind").innerHTML =
+										75 + Math.floor(Math.random() * 5);
+								}
+							}
+
+							changeKg();
+							changeTemperature();
+							changeWind();
+							changeVessels();
+						</script>
+					</div>
+					{{ labels|json_script:"labels" }}
+					<script>
+						const labels = JSON.parse(
+							document.getElementById("labels").textContent
+						)
+
+						const data = {
+							labels: labels,
+							datasets: [
+								{
+									label: "{{ y }}",
+									backgroundColor: "rgb(255, 99, 132)",
+									borderColor: "rgb(255, 99, 132)",
+									data: {{ data }},
+								},
+							],
+						};
+
+						const config = {
+							type: "line",
+							data: data,
+							options: {},
+						};
+					</script>
+					<script>
+						const myChart = new Chart(
+							document.getElementById("myChart"),
+							config
+						);
+					</script>
+				</div>
+			</div>
+		</main>
+	</body>
+</html>

@@ -1,0 +1,63 @@
+@font-face {
+	font-family: "Acumin";
+	src: url("../fonts/Acumin-RPro.woff");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Acumin";
+	src: url("../fonts/Acumin-ItPro.woff");
+	font-weight: normal;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "Acumin";
+	src: url("../fonts/Acumin-BdPro.woff");
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Acumin";
+	src: url("../fonts/Acumin-BdItPro.woff");
+	font-weight: 700;
+	font-style: italic;
+}
+
+.square-data {
+	position: relative;
+	width: 300px;
+	height: 300px;
+	margin: 10px;
+	margin-top: 30px;
+	background-color: grey;
+}
+
+.text-square {
+	position: relative;
+	top: 50px;
+	left: 80px;
+	font-size: 100px;
+	font-family: "Merriweather", serif;
+	color: white;
+}
+
+.text-square-sub {
+	position: relative;
+	top: 50px;
+	left: 70px;
+	font-family: "Merriweather", serif;
+	color: white;
+	font-size: 25px;
+}
+
+.text-square-sub-sub {
+	position: relative;
+	font-family: "Merriweather", serif;
+	top: 50px;
+	left: 110px;
+	color: white;
+	font-size: 15px;
+}

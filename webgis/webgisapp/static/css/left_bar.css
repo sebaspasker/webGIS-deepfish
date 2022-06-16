@@ -1,6 +1,6 @@
 #ship_image_id {
-	padding-right:0px;
-	padding-left:0px;
+	padding-right: 0px;
+	padding-left: 0px;
 	position: relative;
 	right: 17px;
 }
@@ -14,4 +14,8 @@
 
 img {
 	max-width: 100%;
+}
+
+.list-group-item.active {
+	border-top-width: 0px !important;
 }

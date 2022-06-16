@@ -1,40 +1,54 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-<head>
-<meta charset="utf-8">
-<title>Show and hide layers</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"></script>
-<style>
-		body { margin: 0; padding: 0; }
-		#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-</style>
-</head>
-<body>
-<style>
-		.filter-ctrl {
-			position: absolute;
-			top: 10px;
-			right: 150px;
-			z-index: 1;
-		}	
+  <head>
+    <meta charset="utf-8" />
+    <title>Show and hide layers</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <style>
+      .filter-ctrl {
+        position: absolute;
+        top: 10px;
+        right: 150px;
+        z-index: 1;
+      }
 
-		.filter-ctrl input[type='text'] {
-			font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-			width: 100%;
-			border: 0;
-			background-color: #fff;
-			margin: 0;
-			color: rgba(0,0,0,0 0.5);
-			padding: 10px;
-			box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
-			border-radius: 3px;
-			width: 100px;
-		}
+      .filter-ctrl input[type="text"] {
+        font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        width: 100%;
+        border: 0;
+        background-color: #fff;
+        margin: 0;
+        color: rgba(0, 0, 0, 0 0.5);
+        padding: 10px;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+        width: 100px;
+      }
 
-    #menu {
+      #menu {
         background: #fff;
         position: absolute;
         z-index: 1;
@@ -43,10 +57,10 @@
         border-radius: 3px;
         width: 120px;
         border: 1px solid rgba(0, 0, 0, 0.4);
-        font-family: 'Open Sans', sans-serif;
-    }
+        font-family: "Open Sans", sans-serif;
+      }
 
-    #menu a {
+      #menu a {
         font-size: 13px;
         color: #404040;
         display: block;
@@ -56,45 +70,45 @@
         text-decoration: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.25);
         text-align: center;
-    }
+      }
 
-    #menu a:last-child {
+      #menu a:last-child {
         border: none;
-    }
+      }
 
-    #menu a:hover {
+      #menu a:hover {
         background-color: #f8f8f8;
         color: #404040;
-    }
+      }
 
-    #menu a.active {
+      #menu a.active {
         background-color: #3887be;
         color: #ffffff;
-    }
+      }
 
-    #menu a.active:hover {
+      #menu a.active:hover {
         background: #3074a4;
-    }
-</style> 
-	<nav id="menu"></nav>
-	<div id="map"></div>
-	<div class="filter-ctrl">
-		<input id="filter-input" type="text"
-			 name="filter" placeholder="Filter">
-	</div>
-<script>
-	<!-- const layerIDs = [] -->
-	<!-- const filterInput = document.getElementById('filter-input'); -->
-	mapboxgl.accessToken = 'pk.eyJ1IjoiZXNzZWRlcGUiLCJhIjoiY2wxbmVrcGtpMDl2bTNrbzF3ajYxdzc2biJ9.vPfgY7bUBFnO2-NCJ96IEA';
-    const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
+      }
+    </style>
+    <nav id="menu"></nav>
+    <div id="map"></div>
+    <div class="filter-ctrl">
+      <input id="filter-input" type="text" name="filter" placeholder="Filter" />
+    </div>
+    <script>
+      <!-- const layerIDs = [] -->
+      <!-- const filterInput = document.getElementById('filter-input'); -->
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoiZXNzZWRlcGUiLCJhIjoiY2wxbmVrcGtpMDl2bTNrbzF3ajYxdzc2biJ9.vPfgY7bUBFnO2-NCJ96IEA";
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
         zoom: 15,
-				center: [-0.4801385175102711, 38.32622186697402],
-    });
+        center: [-0.4801385175102711, 38.32622186697402],
+      });
 
-    // Wait until the map has finished loading.
-    map.on('load', () => {
+      // Wait until the map has finished loading.
+      map.on("load", () => {
         // Add a custom vector tileset source. This tileset contains
         // point features representing museums. Each feature contains
         // three properties. For example:
@@ -103,147 +117,141 @@
         //     name: "Museo Inka",
         //     tourism: "museum"
         // }
-				map.addSource('route', {
-					'type' : 'geojson',
-					'data' : "{% static 'webgisapp/AIS_trace_route.csv.geojson' %}"
-				});
-				map.addLayer({
-					'id': 'route',
-					'type': 'line',
-					'source': 'route',
-					'layout': {
-						'line-join': 'round',
-						'line-cap': 'butt',
-					},
-					'paint': {
-						'line-color': ['get', 'color'],
-						'line-width': 3
-					}
-				});
+        map.addSource("route", {
+          type: "geojson",
+          data: "{% static 'webgisapp/AIS_trace_route.csv.geojson' %}",
+        });
+        map.addLayer({
+          id: "route",
+          type: "line",
+          source: "route",
+          layout: {
+            "line-join": "round",
+            "line-cap": "butt",
+          },
+          paint: {
+            "line-color": ["get", "color"],
+            "line-width": 3,
+          },
+        });
 
         // Add the Mapbox Terrain v2 vector tileset. Read more about
         // the structure of data in this tileset in the documentation:
         // https://docs.mapbox.com/vector-tiles/reference/mapbox-terrain-v2/
-				map.addSource('vessels', {
-					'type' : 'geojson',
-					'data' : "{% static 'webgisapp/AIS_trace_route_p.csv.geojson' %}"
-				});
+        map.addSource("vessels", {
+          type: "geojson",
+          data: "{% static 'webgisapp/AIS_trace_route_p.csv.geojson' %}",
+        });
         map.addLayer(
           {
-            'id': 'vessels-point',
-            'type': 'circle',
-            'source': 'vessels',
-            'paint': {
+            id: "vessels-point",
+            type: "circle",
+            source: "vessels",
+            paint: {
               // increase the radius of the circle as the zoom level and dbh value increases
-              'circle-radius': {
-                'property': 'Weight',
-                'type': 'exponential',
-                'stops': [
+              "circle-radius": {
+                property: "Weight",
+                type: "exponential",
+                stops: [
                   [{ zoom: 15, value: 1 }, 5],
                   [{ zoom: 15, value: 62 }, 10],
                   [{ zoom: 22, value: 1 }, 20],
-                  [{ zoom: 22, value: 62 }, 50]
-                ]
+                  [{ zoom: 22, value: 62 }, 50],
+                ],
               },
-              'circle-color': {
-                'property': 'Weight',
-                'type': 'exponential',
-                'stops': [
-                  [0, 'rgba(236,222,239,0)'],
-                  [10, 'rgb(236,222,239)'],
-                  [20, 'rgb(208,209,230)'],
-                  [30, 'rgb(166,189,219)'],
-                  [40, 'rgb(103,169,207)'],
-                  [50, 'rgb(28,144,153)'],
-                  [60, 'rgb(1,108,89)']
-                ]
+              "circle-color": {
+                property: "Weight",
+                type: "exponential",
+                stops: [
+                  [0, "rgba(236,222,239,0)"],
+                  [10, "rgb(236,222,239)"],
+                  [20, "rgb(208,209,230)"],
+                  [30, "rgb(166,189,219)"],
+                  [40, "rgb(103,169,207)"],
+                  [50, "rgb(28,144,153)"],
+                  [60, "rgb(1,108,89)"],
+                ],
               },
-              'circle-stroke-color': 'white',
-              'circle-stroke-width': 1,
-              'circle-opacity': {
-                'stops': [
+              "circle-stroke-color": "white",
+              "circle-stroke-width": 1,
+              "circle-opacity": {
+                stops: [
                   [14, 0],
-                  [15, 1]
-                ]
-              }
-            }
+                  [15, 1],
+                ],
+              },
+            },
           },
-          'waterway-label'
+          "waterway-label"
         );
-    });
+      });
 
-    // After the last frame rendered before the map enters an "idle" state.
-    map.on('idle', () => {
+      // After the last frame rendered before the map enters an "idle" state.
+      map.on("idle", () => {
         // If these two layers were not added to the map, abort
-        if (!map.getLayer('route') || !map.getLayer('vessels-point')) {
-            return;
+        if (!map.getLayer("route") || !map.getLayer("vessels-point")) {
+          return;
         }
 
         // Enumerate ids of the layers.
-        const toggleableLayerIds = ['route', 'vessels-point'];
+        const toggleableLayerIds = ["route", "vessels-point"];
 
         // Set up the corresponding toggle button for each layer.
         for (const id of toggleableLayerIds) {
-            // Skip layers that already have a button set up.
-            if (document.getElementById(id)) {
-                continue;
+          // Skip layers that already have a button set up.
+          if (document.getElementById(id)) {
+            continue;
+          }
+
+          // Create a link.
+          const link = document.createElement("a");
+          link.id = id;
+          link.href = "#";
+          link.textContent = id;
+          link.className = "active";
+
+          // Show or hide layer when the toggle is clicked.
+          link.onclick = function (e) {
+            const clickedLayer = this.textContent;
+            e.preventDefault();
+            e.stopPropagation();
+
+            const visibility = map.getLayoutProperty(
+              clickedLayer,
+              "visibility"
+            );
+
+            // Toggle layer visibility by changing the layout object's visibility property.
+            if (visibility === "visible") {
+              map.setLayoutProperty(clickedLayer, "visibility", "none");
+              this.className = "";
+            } else {
+              this.className = "active";
+              map.setLayoutProperty(clickedLayer, "visibility", "visible");
             }
+          };
 
-            // Create a link.
-            const link = document.createElement('a');
-            link.id = id;
-            link.href = '#';
-            link.textContent = id;
-            link.className = 'active';
-
-            // Show or hide layer when the toggle is clicked.
-            link.onclick = function (e) {
-                const clickedLayer = this.textContent;
-                e.preventDefault();
-                e.stopPropagation();
-
-                const visibility = map.getLayoutProperty(
-                    clickedLayer,
-                    'visibility'
-                );
-
-                // Toggle layer visibility by changing the layout object's visibility property.
-                if (visibility === 'visible') {
-                    map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-                    this.className = '';
-                } else {
-                    this.className = 'active';
-                    map.setLayoutProperty(
-                        clickedLayer,
-                        'visibility',
-                        'visible'
-                    );
-                }
-            };
-
-            const layers = document.getElementById('menu');
-            layers.appendChild(link);
+          const layers = document.getElementById("menu");
+          layers.appendChild(link);
         }
-    });
+      });
 
-	map.on('click', (event) => {
-			const features = map.queryRenderedFeatures(event.point, {
-					layers: ['vessels-point']
-				});
-			if(!features.length) {
-					return;
-				}
-			const feature = features[0];
-			const popup = new mapboxgl.Popup({ offset: [0, -15] })
-				.setLngLat(feature.geometry.coordinates)
-				.setHTML(
-					   `<h3 align=center>${feature.properties.MMSI}</h3>
+      map.on("click", (event) => {
+        const features = map.queryRenderedFeatures(event.point, {
+          layers: ["vessels-point"],
+        });
+        if (!features.length) {
+          return;
+        }
+        const feature = features[0];
+        const popup = new mapboxgl.Popup({ offset: [0, -15] })
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML(
+            `<h3 align=center>${feature.properties.MMSI}</h3>
 							<p align=center>${feature.geometry.coordinates}</p>`
-					)
-				.addTo(map);
-		})
-
-</script>
-
-</body>
+          )
+          .addTo(map);
+      });
+    </script>
+  </body>
 </html>

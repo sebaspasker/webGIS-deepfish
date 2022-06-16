@@ -5,6 +5,7 @@ class Vessel(models.Model):
     MMSI = models.CharField(max_length=9, primary_key=True)
     VesselName = models.CharField(max_length=30, null=True)
     Matricula = models.CharField(max_length=12, null=True, unique=True)
+    Image = models.CharField(max_length=20, null=True)
 
     def to_string(self):
         return (

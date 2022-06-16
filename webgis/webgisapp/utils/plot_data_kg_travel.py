@@ -13,8 +13,8 @@ from webgisapp.utils.join_travel import (
 
 def TimeKgAIS(
     ais_v,
-    date_init,
-    date_end,
+    date_init=None,
+    date_end=None,
     specie=False,
     specie_name="",
     amount=False,
@@ -24,34 +24,24 @@ def TimeKgAIS(
     Gets AIS, init date, end date, optionally specie and vessel amount boolean and returns
     the kgs of fish or the amount of vessels based on date.
     """
+    if ais_v is None:
+        ais_v = AISVessel.objects.all()
+
     data = {}
     for day in pd.date_range(date_init, date_end, freq="D"):
         kgs = 0
         # Search AIS in marked day
-        aiss = AISVessel.objects.filter(
+        aiss = ais_v.filter(
             BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
             BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
         )
-        """
-        if ais_v is None:
-            aiss = AISVessel.objects.filter(
-                BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
-                BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
-            )
-        else:
-            
-            aiss = ais_v.filter(
-                BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
-                BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
-            )
-         
-        """   
         if not amount and not amount_of_ais:
             for ais in aiss:
                 # Search fish plates
                 travels = Travel.objects.filter(AIS_fk=ais)
                 if Comprobe_Outdated_Travels(travels):
                     Delete_None_Existing_Travels(travels)
+                    Join_Travels(travels)
 
                 if specie:
                     if "".__eq__(
@@ -82,7 +72,7 @@ def TimeKgAIS(
             data[day] = len(aiss)
         else:
             raise Exception
-    return data
+    return data.keys(), data.values()
 
 
 def PlotController(option, date_init, date_end, ais=None, specie_name=""):
@@ -96,35 +86,36 @@ def PlotController(option, date_init, date_end, ais=None, specie_name=""):
     """
     if option == 1:
         # Time Kg All AIS
-        data = TimeKgAIS(AISVessel.objects.all(), date_init, date_end)
+        data_keys, data_values = TimeKgAIS(AISVessel.objects.all(), date_init, date_end)
         y = "Kgs of fish"
     elif option == 2:
         # Time Kg Some AIS
         if ais is not None:
-            data = TimeKgAIS(ais, date_init, date_end)
+            data_keys, data_values = TimeKgAIS(ais, date_init, date_end)
         else:
             raise EmptyVarException
         y = "Kgs of fish"
     elif option == 3:
         # Time Kg By Specie
-        data = TimeKgAIS(ais, date_init, date_end, specie=True, specie_name=specie_name)
+        data_keys, data_values = TimeKgAIS(
+            ais, date_init, date_end, specie=True, specie_name=specie_name
+        )
         y = "Kg of fish based on specie"
     elif option == 4:
         # Amount of vessel based on time
-        data = TimeKgAIS(AISVessel.objects.all(), date_init, date_end, amount=True)
+        data_keys, data_values = TimeKgAIS(
+            AISVessel.objects.all(), date_init, date_end, amount=True
+        )
         y = "Number of vessels"
     elif option == 5:
         # Amount of vessel based on time
-        data = TimeKgAIS(
+        data_keys, data_values = TimeKgAIS(
             AISVessel.objects.all(), date_init, date_end, amount_of_ais=True
         )
         y = "Number of AIS"
     else:
         raise IncorrectOptionException
-    print(data)
-    BarPlotData(
-        data, "./webgisapp/templates/webgisapp/plot.html", xlabel="Date/Time", ylabel=y
-    )
+    return data_keys, data_values, y
 
 
 def BarPlotData(data, output_path, xlabel="", ylabel=""):
@@ -145,19 +136,3 @@ def BarPlotData(data, output_path, xlabel="", ylabel=""):
     html_file = open(output_path, "w")
     html_file.write(html_str)
     html_file.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

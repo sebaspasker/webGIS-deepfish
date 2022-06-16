@@ -1,40 +1,54 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-<head>
-<meta charset="utf-8">
-<title>Show and hide layers</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"></script>
-<style>
-		body { margin: 0; padding: 0; }
-		#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-</style>
-</head>
-<body>
-<style>
-		.filter-ctrl {
-			position: absolute;
-			top: 10px;
-			right: 150px;
-			z-index: 1;
-		}	
+  <head>
+    <meta charset="utf-8" />
+    <title>Show and hide layers</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <style>
+      .filter-ctrl {
+        position: absolute;
+        top: 10px;
+        right: 150px;
+        z-index: 1;
+      }
 
-		.filter-ctrl input[type='text'] {
-			font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-			width: 100%;
-			border: 0;
-			background-color: #fff;
-			margin: 0;
-			color: rgba(0,0,0,0 0.5);
-			padding: 10px;
-			box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
-			border-radius: 3px;
-			width: 100px;
-		}
+      .filter-ctrl input[type="text"] {
+        font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        width: 100%;
+        border: 0;
+        background-color: #fff;
+        margin: 0;
+        color: rgba(0, 0, 0, 0 0.5);
+        padding: 10px;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+        width: 100px;
+      }
 
-    #menu {
+      #menu {
         background: #fff;
         position: absolute;
         z-index: 1;
@@ -43,10 +57,10 @@
         border-radius: 3px;
         width: 120px;
         border: 1px solid rgba(0, 0, 0, 0.4);
-        font-family: 'Open Sans', sans-serif;
-    }
+        font-family: "Open Sans", sans-serif;
+      }
 
-    #menu a {
+      #menu a {
         font-size: 13px;
         color: #404040;
         display: block;
@@ -56,82 +70,152 @@
         text-decoration: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.25);
         text-align: center;
-    }
+      }
 
-    #menu a:last-child {
+      #menu a:last-child {
         border: none;
-    }
+      }
 
-    #menu a:hover {
+      #menu a:hover {
         background-color: #f8f8f8;
         color: #404040;
-    }
+      }
 
-    #menu a.active {
+      #menu a.active {
         background-color: #3887be;
         color: #ffffff;
-    }
+      }
 
-    #menu a.active:hover {
+      #menu a.active:hover {
         background: #3074a4;
-    }
-</style> 
-	<div id="map"></div>
-	<div class="filter-ctrl">
-		<input id="filter-input" type="text"
-			 name="filter" placeholder="Filter">
-	</div>
-<script>
-	const layerIDs = [];
-	const filterInput = document.getElementById('filter-input');
-	<!-- const data = fetch("{% static 'webgisapp/AIS_trace_route.csv.geojson'%}") -->
-	<!-- 	.then(response => { -->
-	<!-- 			return response.json(); -->
-	<!-- 		}) -->
-	<!-- 	.then(data => console.log(data)) -->
-	data = {"features": [{"geometry": {"coordinates": [[-0.472156, 38.334099], [-0.46691, 38.332498], [-0.46979, 38.32816], [-0.470789, 38.324779], [-0.469262, 38.321184], [-0.469732, 38.315931], [-0.471142, 38.311322]], "type": "LineString"}, "properties": {"Length": "21", "MMSI": "367773370", "VesselName": "Samuel", "VesselType": "31", "Width": "7", "color": "#59ff00"}, "type": "Feature"}, {"geometry": {"coordinates": [[-0.475322, 38.332018], [-0.467598, 38.330368], [-0.467512, 38.328281], [-0.467855, 38.324443], [-0.474893, 38.323652], [-0.470795, 38.321985], [-0.465688, 38.326227]], "type": "LineString"}, "properties": {"Length": "21", "MMSI": "ABSC13324", "VesselName": "Juan", "VesselType": "31", "Width": "7", "color": "#ff4d00"}, "type": "Feature"}, {"geometry": {"coordinates": [[-0.476834, 38.328141], [-0.475976, 38.326357], [-0.475461, 38.325212], [-0.477349, 38.323057], [-0.473615, 38.321273], [-0.475418, 38.320296], [-0.46823, 38.319234]], "type": "LineString"}, "properties": {"Length": "21", "MMSI": "122334455", "VesselName": "Juan", "VesselType": "31", "Width": "7", "color": "#e62980"}, "type": "Feature"}], "type": "FeatureCollection"};
-	mapboxgl.accessToken =
-        'pk.eyJ1IjoibWFsLXdvb2QiLCJhIjoiY2oyZ2t2em50MDAyMzJ3cnltMDFhb2NzdiJ9.X-D4Wvo5E5QxeP7K_I3O8w';
+      }
+    </style>
+    <div id="map"></div>
+    <div class="filter-ctrl">
+      <input id="filter-input" type="text" name="filter" placeholder="Filter" />
+    </div>
+    <script>
+      const layerIDs = [];
+      const filterInput = document.getElementById("filter-input");
+      <!-- const data = fetch("{% static 'webgisapp/AIS_trace_route.csv.geojson'%}") -->
+      <!-- 	.then(response => { -->
+      <!-- 			return response.json(); -->
+      <!-- 		}) -->
+      <!-- 	.then(data => console.log(data)) -->
+      data = {
+        features: [
+          {
+            geometry: {
+              coordinates: [
+                [-0.472156, 38.334099],
+                [-0.46691, 38.332498],
+                [-0.46979, 38.32816],
+                [-0.470789, 38.324779],
+                [-0.469262, 38.321184],
+                [-0.469732, 38.315931],
+                [-0.471142, 38.311322],
+              ],
+              type: "LineString",
+            },
+            properties: {
+              Length: "21",
+              MMSI: "367773370",
+              VesselName: "Samuel",
+              VesselType: "31",
+              Width: "7",
+              color: "#59ff00",
+            },
+            type: "Feature",
+          },
+          {
+            geometry: {
+              coordinates: [
+                [-0.475322, 38.332018],
+                [-0.467598, 38.330368],
+                [-0.467512, 38.328281],
+                [-0.467855, 38.324443],
+                [-0.474893, 38.323652],
+                [-0.470795, 38.321985],
+                [-0.465688, 38.326227],
+              ],
+              type: "LineString",
+            },
+            properties: {
+              Length: "21",
+              MMSI: "ABSC13324",
+              VesselName: "Juan",
+              VesselType: "31",
+              Width: "7",
+              color: "#ff4d00",
+            },
+            type: "Feature",
+          },
+          {
+            geometry: {
+              coordinates: [
+                [-0.476834, 38.328141],
+                [-0.475976, 38.326357],
+                [-0.475461, 38.325212],
+                [-0.477349, 38.323057],
+                [-0.473615, 38.321273],
+                [-0.475418, 38.320296],
+                [-0.46823, 38.319234],
+              ],
+              type: "LineString",
+            },
+            properties: {
+              Length: "21",
+              MMSI: "122334455",
+              VesselName: "Juan",
+              VesselType: "31",
+              Width: "7",
+              color: "#e62980",
+            },
+            type: "Feature",
+          },
+        ],
+        type: "FeatureCollection",
+      };
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoibWFsLXdvb2QiLCJhIjoiY2oyZ2t2em50MDAyMzJ3cnltMDFhb2NzdiJ9.X-D4Wvo5E5QxeP7K_I3O8w";
       const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
         center: [-0.28634550125236236, 38.03759971570147],
-        zoom: 10
+        zoom: 10,
       });
-      map.on('load', () => {
-        map.addSource('vessels', {
-          'type': 'geojson',
-								'data': data
+      map.on("load", () => {
+        map.addSource("vessels", {
+          type: "geojson",
+          data: data,
         });
 
-				for (const feature of data.features) {
-						const MMSI = feature.properties.MMSI;
-						const vesselID = `${MMSI}`;
+        for (const feature of data.features) {
+          const MMSI = feature.properties.MMSI;
+          const vesselID = `${MMSI}`;
 
-						if(!map.getLayer(vesselID)) {
-								map.addLayer({
-										'id':vesselID,
-										'type':'line',
-										'source':'vessels',
-										'filter': ['==', 'MMSI', vesselID]
-									});
-								layerIDs.push(vesselID)
-							}
-					}
-				
-					filterInput.addEventListener('keyup', (e) => {
-							const value = e.target.value.trim();
-							for (const vesselID of layerIDs) {
-								map.setLayoutProperty(
-									vesselID,
-									'visibility',
-									vesselID.startsWith(value) ? 'visible' : 'none'
-								);
-							}
-						});
-				});
-		
-</script>
+          if (!map.getLayer(vesselID)) {
+            map.addLayer({
+              id: vesselID,
+              type: "line",
+              source: "vessels",
+              filter: ["==", "MMSI", vesselID],
+            });
+            layerIDs.push(vesselID);
+          }
+        }
 
-</body>
+        filterInput.addEventListener("keyup", (e) => {
+          const value = e.target.value.trim();
+          for (const vesselID of layerIDs) {
+            map.setLayoutProperty(
+              vesselID,
+              "visibility",
+              vesselID.startsWith(value) ? "visible" : "none"
+            );
+          }
+        });
+      });
+    </script>
+  </body>
 </html>
