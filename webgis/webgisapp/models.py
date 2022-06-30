@@ -49,8 +49,14 @@ class AISVessel(models.Model):
         )
 
 
+# Añadir timestamp
 class Plate(models.Model):
-    Lote = models.CharField(max_length=15, null=False, primary_key=True)
+    # Cambiar que sea el timestamp de la imagen
+    Timestamp = models.DateTimeField(primary_key=True, auto_now_add=True)
+    Lote = models.CharField(
+        max_length=15,
+        null=False,
+    )
     Matricula = models.ForeignKey(
         Vessel,
         on_delete=models.CASCADE,
@@ -64,6 +70,31 @@ class Plate(models.Model):
     Nombre_Pez_Bandeja = models.CharField(max_length=20, null=True)
     Kg_Bandeja = models.IntegerField(null=True)
 
+    def to_string(self):
+        return (
+            "\n\nLote: "
+            + self.Lote
+            + " Matricula: "
+            + self.Matricula.Matricula
+            + " Timestamp: "
+            + self.Timestamp
+            + "\n--------------------------------\n"
+            + "Puerto: "
+            + str(self.Puerto)
+            + " Zona captura: "
+            + str(self.Zona_Captura)
+            + "\nPez: "
+            + str(self.Nombre_Pez_Bandeja)
+            + " Kg: "
+            + str(self.Kg_Bandeja)
+            + "\n................................\n"
+            + "Fecha inicio: "
+            + str(self.Fecha_Inicio)
+            + "\nFecha fin: "
+            + str(self.Fecha_Fin)
+            + "\n________________________________\n"
+        )
+
 
 class Fish(models.Model):
     Nombre_Cientifico = models.CharField(max_length=30, primary_key=True)
@@ -71,34 +102,32 @@ class Fish(models.Model):
 
 
 # Fish analysis in each plate
+# Quitar la cantidad
 class Fish_Plate(models.Model):
-    Lote = models.ForeignKey(
-        Plate, on_delete=models.CASCADE, to_field="Lote", related_name="LoteOf"
-    )
+    Plate = models.ForeignKey(Plate, on_delete=models.CASCADE)
     Nombre_Cientifico = models.ForeignKey(
         Fish, on_delete=models.CASCADE, to_field="Nombre_Cientifico"
     )
-    Talla_cm = models.IntegerField()
-    Cantidad = models.IntegerField()
-    Peso = models.FloatField(null=True)
+    Talla_cm = models.FloatField()
+    Peso = models.FloatField()
 
 
 # Relation to easy search
 class Travel(models.Model):
     Vessel_fk = models.ForeignKey(Vessel, on_delete=models.CASCADE)
     AIS_fk = models.ForeignKey(AISVessel, on_delete=models.CASCADE)
-    Plate_fk = models.ForeignKey(Plate, on_delete=models.CASCADE)
+    Plate_fk = models.ForeignKey(Plate, on_delete=models.CASCADE, to_field="Timestamp")
 
     class Meta:
         unique_together = ("Vessel_fk", "AIS_fk", "Plate_fk")
 
     def to_string(self):
         return (
-            "Travel with AIS:("
+            "Travel with AIS: ("
             + AIS_fk.id
-            + ") Vessel:("
+            + ") Vessel: ("
             + Vessel_fk.id
-            + ") Plate:("
-            + Plate_kf.id
+            + ") Plate: ("
+            + Plate_fk.id
             + ")"
         )

@@ -20,6 +20,7 @@ class SearchIndexForm(forms.Form):
         ("fecha_fin", "Fecha fin"),
         ("talla", "Talla"),
         ("especie", "Especie"),
+        ("posicion", "Posicion"),
     )
 
     select_1 = forms.ChoiceField(choices=colors)
@@ -32,6 +33,8 @@ class SearchIndexForm(forms.Form):
     text_input_4 = forms.CharField(label="Input", max_length=20, required=True)
     select_5 = forms.ChoiceField(choices=colors)
     text_input_5 = forms.CharField(label="Input", max_length=20, required=True)
+    select_6 = forms.ChoiceField(choices=colors)
+    text_input_6 = forms.CharField(label="Input", max_length=20, required=True)
 
 
 # options = (

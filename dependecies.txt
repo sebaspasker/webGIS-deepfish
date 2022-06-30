@@ -8,3 +8,9 @@ pyqt5
 mpld3
 pytest
 pytest-django
+django-chartjs
+pyqrcode
+opencv-python
+tqdm
+odfpy
+requests

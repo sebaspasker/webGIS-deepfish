@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from flask import json
 from .forms import SearchForm, SearchIndexForm
+import urllib.request
 from webgisapp.models import AISVessel, Vessel
 from webgisapp.utils.filter import Filter_Route, Filter_Type, filterDictForm
 from webgisapp.utils.plot_data_kg_travel import PlotController
@@ -15,11 +16,11 @@ def index(request):
     if request.method == "POST":
         form = SearchIndexForm()
         dict_form = {}
-        for i in range(1, 6):
+        for i in range(1, 7):
             dict_form["option_" + str(i)] = request.POST.get("select_" + str(i))
             dict_form["text_input_" + str(i)] = request.POST.get("text_input_" + str(i))
-        mmsi, date_from, date_to, talla, especie = filterDictForm(dict_form)
-        v, ais = Filter_Route(mmsi, date_from, date_to, talla, especie)
+        mmsi, date_from, date_to, talla, especie, posicion = filterDictForm(dict_form)
+        v, ais = Filter_Route(mmsi, date_from, date_to, talla, especie, posicion)
         if Comprobe_Possible_Join_Travels(ais, vessels=v):
             Join_Travels(vessels=v, aiss=ais)
         # Elegimos en base al tipo
@@ -77,36 +78,76 @@ def index(request):
 
 # Mapa de calor
 def index2(request):
-    collection, route, typee = Filter_Type(
-        "PointAndLine", Vessel.objects.all(), AISVessel.objects.all()
-    )
-    collection_individual, _, _ = Filter_Type(
-        "Heat", Vessel.objects.all(), AISVessel.objects.all()
-    )
+    if request.method == "POST":
+        form = SearchIndexForm()
+        dict_form = {}
+        for i in range(1, 7):
+            dict_form["option_" + str(i)] = request.POST.get("select_" + str(i))
+            dict_form["text_input_" + str(i)] = request.POST.get("text_input_" + str(i))
+        mmsi, date_from, date_to, talla, especie, posicion = filterDictForm(dict_form)
+        v, ais = Filter_Route(mmsi, date_from, date_to, talla, especie, posicion)
 
-    return render(
-        request,
-        "webgisapp/map/map_index2.html",
-        {
-            "MMSI": "123",
-            "VesselName": "El Buque",
-            "LON": 12.65,
-            "LAT": 12.43,
-            "COG": "1.0",
-            "SOG": "3.0",
-            "BaseDateTime": str(datetime.now()),
-            "CallSign": "321",
-            "VesselType": "A",
-            "Length": "5m",
-            "Width": "2m",
-            "Cargo": "A",
-            "TransceiverClass": "A",
-            "collection": collection,
-            "collection_individual": collection_individual,
-            "type": typee,
-            "form": SearchIndexForm(),
-        },
-    )
+        collection, route, typee = Filter_Type("PointAndLine", v, ais)
+
+        collection_individual, _, _ = Filter_Type("Heat", v, ais)
+
+        if Comprobe_Possible_Join_Travels(ais, vessels=v):
+            Join_Travels(vessels=v, aiss=ais)
+        return render(
+            request,
+            "webgisapp/map/map_index2.html",
+            {
+                "MMSI": "123",
+                "VesselName": "El Buque",
+                "LON": 12.65,
+                "LAT": 12.43,
+                "COG": "1.0",
+                "SOG": "3.0",
+                "BaseDateTime": str(datetime.now()),
+                "CallSign": "321",
+                "VesselType": "A",
+                "Length": "5m",
+                "Width": "2m",
+                "Cargo": "A",
+                "TransceiverClass": "A",
+                "collection": collection,
+                "collection_individual": collection_individual,
+                "type": typee,
+                "form": SearchIndexForm(),
+            },
+        )
+    else:
+        form = SearchIndexForm()
+        collection, route, typee = Filter_Type(
+            "PointAndLine", Vessel.objects.all(), AISVessel.objects.all()
+        )
+        collection_individual, _, _ = Filter_Type(
+            "Heat", Vessel.objects.all(), AISVessel.objects.all()
+        )
+
+        return render(
+            request,
+            "webgisapp/map/map_index2.html",
+            {
+                "MMSI": "123",
+                "VesselName": "El Buque",
+                "LON": 12.65,
+                "LAT": 12.43,
+                "COG": "1.0",
+                "SOG": "3.0",
+                "BaseDateTime": str(datetime.now()),
+                "CallSign": "321",
+                "VesselType": "A",
+                "Length": "5m",
+                "Width": "2m",
+                "Cargo": "A",
+                "TransceiverClass": "A",
+                "collection": collection,
+                "collection_individual": collection_individual,
+                "type": typee,
+                "form": SearchIndexForm(),
+            },
+        )
 
 
 def index3(request):
@@ -126,6 +167,9 @@ def index3(request):
     )
 
 
+import requests
+
+
 def plotpage(request, option):
     input_option = 4
     if option == 1:
@@ -136,9 +180,19 @@ def plotpage(request, option):
         input_option = 5
     data_keys, data_values, y = PlotController(
         input_option,
-        datetime.now() - timedelta(days=1),
-        datetime.now() + timedelta(days=5),
+        # datetime.now() - timedelta(days=1),
+        # datetime.now() + timedelta(days=5),
     )
+
+    source = requests.get(
+        "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Alicante/today?unitGroup=metric&elements=temp%2Cwindspeed&include=current&key=WNLS765U59WBFAWKRW3GCAVAW&contentType=json"
+    ).text
+
+    list_of_data = json.loads(source)
+
+    temperature = str(int(list_of_data["currentConditions"]["temp"]))
+    windspeed = str(int(list_of_data["currentConditions"]["windspeed"]))
+
     return render(
         request,
         "webgisapp/map/map_plot.html",
@@ -146,6 +200,8 @@ def plotpage(request, option):
             "labels": [x.strftime("%Y-%m-%d") for x in list(data_keys)],
             "data": json.dumps(list(data_values)),
             "y": y,
+            "temperature": temperature,
+            "wind": windspeed,
         },
     )
 

@@ -9,7 +9,8 @@ class TestRelateAISKg:
     pytestmark = pytest.mark.django_db
 
     def setup(self):
-        setupTestRelateAISKg(self)
+        pass
+        # setupTestRelateAISKg(self)
 
     def testTravelsInstance(self):
         # TODO
