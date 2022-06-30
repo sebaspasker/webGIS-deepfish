@@ -12,7 +12,7 @@ def relateAISKg(travels, specie=False, name_specie=""):
         plate = travel.Plate_fk
         avg = 0.0
         if not specie:
-            fish_plates = Fish_Plate.objects.filter(Lote=plate)
+            fish_plates = Fish_Plate.objects.filter(Plate=plate)
             # fish_plates = Fish_Plate.objects.all()
         else:
             if not "".__eq__(name_specie):

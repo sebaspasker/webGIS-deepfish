@@ -4,6 +4,9 @@ from .exceptions import *
 from geojson import FeatureCollection, Feature, LineString, Point
 from .join_travel import Delete_None_Existing_Travels, Comprobe_Outdated_Travels
 from random import randrange
+import random
+import names
+import string
 from webgisapp.models import AISVessel, Vessel, Travel
 from .weight_kg_generator import relateAISKg
 
@@ -38,6 +41,13 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
     features = []
     color = 0
     for Vessel in Vessels:
+        # TODO Temporary code for anonimous data
+        vessel_name = names.get_first_name()
+        matricula = "".join(
+            random.SystemRandom().choice(string.ascii_letters + string.digits)
+            for _ in range(8)
+        )
+
         AIS_Q = AISQuery.filter(
             MMSI=Vessel
         )  # Buscamos los AIS que concuerden con el vessel
@@ -72,7 +82,8 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                         geometry=Type([(AIS.LON, AIS.LAT) for AIS in ais_g]),
                         properties={
                             "MMSI": Vessel.MMSI,
-                            "VesselName": Vessel.VesselName,
+                            "VesselName": vessel_name,  # TODO temporary
+                            # "VesselName": Vessel.VesslName
                             "Matricula": Vessel.Matricula,
                             "Color": colors[color % len(colors)],
                             "Image": Vessel.Image,
@@ -84,7 +95,8 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                             geometry=Type([(AIS.LON, AIS.LAT)]),
                             properties={
                                 "MMSI": Vessel.MMSI,
-                                "VesselName": Vessel.VesselName,
+                                "VesselName": vessel_name,  # TODO temporary
+                                # "VesselName": Vessel.VesselName,
                                 "Matricula": Vessel.Matricula,
                                 "Image": Vessel.Image,
                                 "LON": str(AIS.LON)[0:8],
@@ -103,8 +115,8 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                         )
                         if Heat and len(travels) > 0:
                             # TODO esta mal?
-                            # f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
-                            f.properties["Weight"] = randrange(0, 30)
+                            f.properties["Weight"] = travel_dict[travels[0].id]["Kg"]
+                            # f.properties["Weight"] = randrange(0, 30)
                         elif Heat:
                             f.properties["Weight"] = 0.0
                         features.append(f)

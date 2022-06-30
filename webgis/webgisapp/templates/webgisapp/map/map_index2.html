@@ -407,6 +407,7 @@
 											<option value="fecha_fin">Fecha fin</option>
 											<option value="talla">Talla</option>
 											<option value="especie">Especie</option>
+											<option value="posicion">Posición geográfica</option>
 										</select>
 									</div>
 									<div class="col-6">
@@ -418,7 +419,7 @@
 											id="form"
 											style="border-radius: 5px; border: 1px"
 											method="POST"
-											action="/webgisapp/"
+											action="/webgisapp/2/"
 										>
 											{% csrf_token %}
 											<div style="display: none">
@@ -444,11 +445,12 @@
 								>
 									<div class="col-3">
 										<select id="select_2" class="form-select">
-											<option value="mmsi">MMSI</option>
 											<option value="fecha_inicio">Fecha inicio</option>
 											<option value="fecha_fin">Fecha fin</option>
+											<option value="mmsi">MMSI</option>
 											<option value="talla">Talla</option>
 											<option value="especie">Especie</option>
+											<option value="posicion">Posición geográfica</option>
 										</select>
 									</div>
 									<div class="col-9">
@@ -462,11 +464,12 @@
 								>
 									<div class="col-3">
 										<select id="select_3" class="form-select">
-											<option value="mmsi">MMSI</option>
-											<option value="fecha_inicio">Fecha inicio</option>
 											<option value="fecha_fin">Fecha fin</option>
+											<option value="fecha_inicio">Fecha inicio</option>
+											<option value="mmsi">MMSI</option>
 											<option value="talla">Talla</option>
 											<option value="especie">Especie</option>
+											<option value="posicion">Posición geográfica</option>
 										</select>
 									</div>
 									<div class="col-9">
@@ -480,11 +483,12 @@
 								>
 									<div class="col-3">
 										<select id="select_4" class="form-select">
+											<option value="talla">Talla</option>
 											<option value="mmsi">MMSI</option>
 											<option value="fecha_inicio">Fecha inicio</option>
 											<option value="fecha_fin">Fecha fin</option>
-											<option value="talla">Talla</option>
 											<option value="especie">Especie</option>
+											<option value="posicion">Posición geográfica</option>
 										</select>
 									</div>
 									<div class="col-9">
@@ -498,15 +502,35 @@
 								>
 									<div class="col-3">
 										<select id="select_5" class="form-select">
+											<option value="especie">Especie</option>
 											<option value="mmsi">MMSI</option>
 											<option value="fecha_inicio">Fecha inicio</option>
 											<option value="fecha_fin">Fecha fin</option>
 											<option value="talla">Talla</option>
-											<option value="especie">Especie</option>
+											<option value="posicion">Posición geográfica</option>
 										</select>
 									</div>
 									<div class="col-9">
 										<input type="text" class="form-control" id="text_input_5" />
+									</div>
+								</div>
+								<div
+									id="row_form_5"
+									class="row"
+									style="display: none !important"
+								>
+									<div class="col-3">
+										<select id="select_6" class="form-select">
+											<option value="posicion">Posición geográfica</option>
+											<option value="talla">Talla</option>
+											<option value="mmsi">MMSI</option>
+											<option value="fecha_inicio">Fecha inicio</option>
+											<option value="fecha_fin">Fecha fin</option>
+											<option value="especie">Especie</option>
+										</select>
+									</div>
+									<div class="col-9">
+										<input type="text" class="form-control" id="text_input_6" />
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px">
@@ -523,7 +547,7 @@
 											let id = 1;
 											document.getElementById("submit_button").onclick =
 												function () {
-													for (let i = 1; i < 6; i++) {
+													for (let i = 1; i < 7; i++) {
 														document.getElementById("id_select_" + i).value =
 															document.getElementById("select_" + i).value;
 														document.getElementById(
@@ -621,17 +645,17 @@
 									"circle-color": ["get", "Color"],
 								},
 							});
-							layerIDs.push(vesselID);
-							map.addLayer({
-								id: vesselID + "line",
-								type: "line",
-								source: "vessels",
-								filter: ["==", "MMSI", vesselID],
-								paint: {
-									"line-color": ["get", "Color"],
-									"line-width": 1,
-								},
-							});
+							//							layerIDs.push(vesselID);
+							//							map.addLayer({
+							//								id: vesselID + "line",
+							//								type: "line",
+							//								source: "vessels",
+							//								filter: ["==", "MMSI", vesselID],
+							//								paint: {
+							//									"line-color": ["get", "Color"],
+							//									"line-width": 1,
+							//								},
+							//							});
 							layerIDs.push(vesselID);
 						} else if (type == "line") {
 							map.addLayer({

@@ -5,7 +5,9 @@ from geojson import LineString, Point, MultiPoint
 import datetime
 
 
-def Filter_Route(MMSI=None, date_from=None, date_to=None, talla=None, pez=None):
+def Filter_Route(
+    MMSI=None, date_from=None, date_to=None, talla=None, pez=None, posicion=None
+):
     """
     Comprueba los objetos que no estén vaciós de las variables:
         MMSI, fecha inicio, fecha fin, talla, pez
@@ -18,6 +20,7 @@ def Filter_Route(MMSI=None, date_from=None, date_to=None, talla=None, pez=None):
         date_to,
         talla,
         pez,
+        posicion,
     ]:  # Comprobamos los parámetros vacíos
         if var is None:
             null_q.append(False)
@@ -30,7 +33,7 @@ def Filter_Route(MMSI=None, date_from=None, date_to=None, talla=None, pez=None):
     ais = AISVessel.objects.all()
     vessel = Vessel.objects.all()
     plate = Plate.objects.all()
-    for notNull, i in zip(null_q, range(5)):  # Filtrado
+    for notNull, i in zip(null_q, range(6)):  # Filtrado
         if i == 0 and notNull:
             # Busquedad en base al MMSI
             vessel = vessel.filter(MMSI__contains=MMSI)
@@ -44,7 +47,7 @@ def Filter_Route(MMSI=None, date_from=None, date_to=None, talla=None, pez=None):
                     Fecha_Fin__range=(date_from, date_to),
                 )
                 ais_ids = ais.values_list("MMSI", flat=True)
-                vessel = vessel.filter(MMSI__in=ais_ids)
+                vessel = vessel.filter(mmsi__in=ais_ids)
         elif i == 3 and notNull:
             # Busquedad en base a la talla del pez
             lote_ids = Fish_Plate.objects.filter(
@@ -69,6 +72,17 @@ def Filter_Route(MMSI=None, date_from=None, date_to=None, talla=None, pez=None):
                 )
             )
             ais = ais.filter(MMSI__in=vessel)
+        elif i == 5 and notNull:
+            lon, lat = map(float, posicion.split(","))
+            ais = ais.filter(
+                LON__gt=lon - 0.02,
+                LON__lt=lon + 0.02,
+                LAT__gt=lat - 0.02,
+                LAT__lt=lat + 0.02,
+            )
+            vessel = vessel.filter()
+            ais_ids = ais.values_list("MMSI", flat=True)
+            vessel = vessel.filter(MMSI__in=ais_ids)
         elif (null_q[1] and not null_q[2]) or (not null_q[1] and null_q[2]):
             raise DateRangeException
     return vessel, ais
@@ -109,7 +123,8 @@ def filterDictForm(dictform):
     date_to = None
     talla = None
     especie = None
-    for i in range(1, 6):
+    posicion = None
+    for i in range(1, 7):
         text_input = dictform["text_input_" + str(i)]
         if not "".__eq__(text_input):
             option = dictform["option_" + str(i)]
@@ -123,4 +138,6 @@ def filterDictForm(dictform):
                 talla = text_input
             elif option == "especie":
                 especie = text_input
-    return mmsi, date_from, date_to, talla, especie
+            elif option == "posicion":
+                posicion = text_input
+    return mmsi, date_from, date_to, talla, especie, posicion

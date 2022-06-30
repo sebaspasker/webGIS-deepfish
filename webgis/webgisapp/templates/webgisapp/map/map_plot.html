@@ -146,15 +146,17 @@
 					</div>
 					<div class="col-3 col-md-3 col-sm-2 align-self-center">
 						<div class="square-data rounded">
-							<div id="temperature" class="text-square">32º</div>
-							<div class="text-square-sub" style="left: 65px">Temperature</div>
+							<div id="temperature" class="text-square">{{ temperature }}º</div>
+							<div class="text-square-sub" style="left: 50px">
+								Temperatura (ºC)
+							</div>
 							<div class="text-square-sub-sub">(Alicante)</div>
 						</div>
 					</div>
 					<div class="col-3 col-md-3 col-sm-2 align-self-center">
 						<div class="square-data rounded">
-							<div id="wind" class="text-square">74</div>
-							<div class="text-square-sub" style="left: 110px">Wind</div>
+							<div id="wind" class="text-square">{{ wind }}</div>
+							<div class="text-square-sub" style="left: 75px">Wind (MPH)</div>
 							<div class="text-square-sub-sub">(Alicante)</div>
 						</div>
 					</div>
@@ -240,8 +242,6 @@
 							}
 
 							changeKg();
-							changeTemperature();
-							changeWind();
 							changeVessels();
 						</script>
 					</div>

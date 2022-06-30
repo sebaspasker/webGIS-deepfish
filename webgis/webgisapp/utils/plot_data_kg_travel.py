@@ -28,54 +28,108 @@ def TimeKgAIS(
         ais_v = AISVessel.objects.all()
 
     data = {}
-    for day in pd.date_range(date_init, date_end, freq="D"):
-        kgs = 0
-        # Search AIS in marked day
-        aiss = ais_v.filter(
-            BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
-            BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
-        )
-        if not amount and not amount_of_ais:
-            for ais in aiss:
-                # Search fish plates
-                travels = Travel.objects.filter(AIS_fk=ais)
-                if Comprobe_Outdated_Travels(travels):
-                    Delete_None_Existing_Travels(travels)
-                    Join_Travels(travels)
+    if date_init is not None and date_end is not None:
+        for day in pd.date_range(date_init, date_end, freq="D"):
+            kgs = 0
+            # Search AIS in marked day
+            aiss = ais_v.filter(
+                BaseDateTime__gt=day.replace(hour=00, minute=00, second=0),
+                BaseDateTime__lt=day.replace(hour=23, minute=59, second=59),
+            )
+            if not amount and not amount_of_ais:
+                for ais in aiss:
+                    # Search fish plates
+                    travels = Travel.objects.filter(AIS_fk=ais)
+                    if Comprobe_Outdated_Travels(travels):
+                        Delete_None_Existing_Travels(travels)
+                        Join_Travels(travels)
 
-                if specie:
-                    if "".__eq__(
-                        specie_name
-                    ):  # In case empty specie name and but boolean True
-                        raise EmptyVarException
-                    # Search fish plates based on fish specie
-                    fishes = Fish.objects.filter(
-                        Nombre_Cientifico__startswith=specie_name
-                    )
-                    fish_plates = Fish_Plate.objects.filter(
-                        Nombre_Cientifico__in=fishes
-                    )
-                else:
-                    fish_plates = Fish_Plate.objects.all()
-                # Search Weight
-                fish_plates_kg = fish_plates.filter(
-                    Lote__in=[travel.Plate_fk for travel in travels]
-                ).values_list("Peso", flat=True)
-                for kg in fish_plates_kg:
-                    kgs += kg
-            data[day] = kgs
-        elif amount:
-            # In case amount True save length of vessels array
-            data[day] = len(set(aiss.all().values_list("MMSI", flat=True)))
-        elif amount_of_ais:
-            # In case amount_of_ais True save length of ais array
-            data[day] = len(aiss)
-        else:
-            raise Exception
-    return data.keys(), data.values()
+                    if specie:
+                        if "".__eq__(
+                            specie_name
+                        ):  # In case empty specie name and but boolean True
+                            raise EmptyVarException
+                        # Search fish plates based on fish specie
+                        fishes = Fish.objects.filter(
+                            Nombre_Cientifico__startswith=specie_name
+                        )
+                        fish_plates = Fish_Plate.objects.filter(
+                            Nombre_Cientifico__in=fishes
+                        )
+                    else:
+                        fish_plates = Fish_Plate.objects.all()
+                    # Search Weight
+                    fish_plates_kg = fish_plates.filter(
+                        Plate__in=[travel.Plate_fk for travel in travels]
+                    ).values_list("Peso", flat=True)
+                    for kg in fish_plates_kg:
+                        kgs += kg
+                data[day] = kgs
+            elif amount:
+                # In case amount True save length of vessels array
+                data[day] = len(set(aiss.all().values_list("MMSI", flat=True)))
+            elif amount_of_ais:
+                # In case amount_of_ais True save length of ais array
+                data[day] = len(aiss)
+            else:
+                raise Exception
+    else:
+        days = []
+        plates_used = []
+        for ais in AISVessel.objects.all():
+            dax = ais.BaseDateTime
+            day = datetime(dax.day, dax.month, dax.year)  # Incorrect save format
+            kgs = 0
+            travels = Travel.objects.filter(AIS_fk=ais).exclude(
+                Plate_fk__in=plates_used,
+            )
+            plates_used += [travel.Plate_fk.Timestamp for travel in travels]
+
+            if specie:
+                if "".__eq__(
+                    specie_name
+                ):  # In case empty specie name and but boolean True
+                    raise EmptyVarException
+                # Search fish plates based on fish specie
+                fishes = Fish.objects.filter(Nombre_Cientifico__startswith=specie_name)
+                fish_plates = Fish_Plate.objects.filter(Nombre_Cientifico__in=fishes)
+            else:
+                fish_plates = Fish_Plate.objects.all()
+            # Search Weight
+            fish_plates_kg = fish_plates.filter(
+                Plate__in=[travel.Plate_fk for travel in travels]
+            ).values_list("Peso", flat=True)
+            for kg in fish_plates_kg:
+                kgs += kg
+
+            if not amount and not amount_of_ais:
+                if day not in data:
+                    data[day] = 0
+                    days.append(day)
+                data[day] += kgs / 1000
+            elif amount:
+                # In case amount True save length of vessels array
+                if day not in data:
+                    data[day] = 0
+                    days.append(day)
+                data[day] += 1
+            elif amount_of_ais:
+                # In case amount_of_ais True save length of ais array
+                if day not in data:
+                    data[day] = 0
+                    days.append(day)
+                data[day] += 1
+            else:
+                print("EXCEPTION")
+                raise Exception
+    days.sort()
+    data_s = {}
+    for dayz in days:
+        data_s[dayz] = data[dayz]
+    return data_s.keys(), data_s.values()
 
 
-def PlotController(option, date_init, date_end, ais=None, specie_name=""):
+def PlotController(option, date_init=None, date_end=None, ais=None, specie_name=""):
     """
     Plot Controller: search based on ais data and plot it in html file.
     Options:
@@ -112,6 +166,7 @@ def PlotController(option, date_init, date_end, ais=None, specie_name=""):
         data_keys, data_values = TimeKgAIS(
             AISVessel.objects.all(), date_init, date_end, amount_of_ais=True
         )
+        print(data_keys, data_values)
         y = "Number of AIS"
     else:
         raise IncorrectOptionException
