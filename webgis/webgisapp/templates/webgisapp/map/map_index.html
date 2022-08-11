@@ -619,7 +619,6 @@
 							source: "vessels",
 							maxzoom: 15,
 							paint: {
-								// increase weight as diameter breast height increases
 								"heatmap-weight": {
 									property: "Weight",
 									type: "exponential",
@@ -628,7 +627,6 @@
 										[62, 1],
 									],
 								},
-								// increase intensity as zoom level increases
 								"heatmap-intensity": {
 									stops: [
 										[11, 1],
@@ -641,14 +639,13 @@
 									["linear"],
 									["heatmap-density"],
 									0,
-									//                'rgba(236,222,239,0)',
-									"rgba(255,255,255,0)",
+									"rgba(236,222,239,0)",
 									0.2,
-									"rgb(93, 163, 253)",
+									"rgb(208,209,230)",
 									0.4,
-									"rgb(5, 111, 252)",
+									"rgb(166,189,219)",
 									0.6,
-									"rgb(1, 53, 121)",
+									"rgb(103,169,207)",
 									0.8,
 									"rgb(28,144,153)",
 								],

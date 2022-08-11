@@ -117,6 +117,7 @@ class Travel(models.Model):
     Vessel_fk = models.ForeignKey(Vessel, on_delete=models.CASCADE)
     AIS_fk = models.ForeignKey(AISVessel, on_delete=models.CASCADE)
     Plate_fk = models.ForeignKey(Plate, on_delete=models.CASCADE, to_field="Timestamp")
+    KG = models.FloatField(null=True)
 
     class Meta:
         unique_together = ("Vessel_fk", "AIS_fk", "Plate_fk")
@@ -131,3 +132,11 @@ class Travel(models.Model):
             + Plate_fk.id
             + ")"
         )
+
+
+class Travel_Fish(models.Model):
+    Travel_fk = models.ForeighKey(Travel, on_delete=models.CASCADE)
+    Nombre_Cientifico = models.ForeignKey(
+        Fish, on_delete=models.CASCADE, to_field="Nombre_Cientifico"
+    )
+    KG = models.FloatField(null=True)

@@ -2,6 +2,7 @@ import random
 import string
 from datetime import datetime
 from django.core.management import BaseCommand
+from random import randrange
 from webgisapp.models import *
 
 fishes = {
@@ -67,33 +68,55 @@ class Command(BaseCommand):
 
                 # Save Vessel
 
-                v = Vessel(
-                    MMSI="".join(
-                        random.SystemRandom().choice(
-                            string.ascii_letters + string.digits
-                        )
-                        for _ in range(9)
-                    ).upper(),
-                    VesselName=name,
-                    Matricula=matricula,
-                    Image=None,
-                )
+                vessels = Vessel.objects.all()
+                v = vessels[randrange(0, len(vessels))]
 
-                try:
-                    v.save()
-                except Exception:
-                    pass
+                # v = Vessel(
+                #     MMSI="".join(
+                #         random.SystemRandom().choice(
+                #             string.ascii_letters + string.digits
+                #         )
+                #         for _ in range(9)
+                #     ).upper(),
+                #     VesselName=name,
+                #     Matricula=matricula,
+                #     Image=None,
+                # )
+
+                # try:
+                #     v.save()
+                # except Exception:
+                #     pass
 
                 # Save Plate
 
-                date = list(map(int, line_split[6].split("/")))  # Save date
+                aiss = AISVessel.objects.filter(MMSI=v)
+                random_ais = aiss[randrange(0, len(aiss))]
+
+                # date = list(map(int, line_split[6].split("/")))  # Save date
                 p = Plate(
                     Lote=line_split[1],
-                    Matricula=Vessel.objects.filter(Matricula=matricula).first(),
+                    Matricula=v,
                     Puerto="Campello",
                     Zona_Captura=line_split[11][len(line_split[11]) - 1],
-                    Fecha_Inicio=datetime(date[0], date[1], date[2], 0, 0, 0),
-                    Fecha_Fin=datetime(date[0], date[1], date[2], 23, 59, 59),
+                    # Fecha_Inicio=datetime(date[0], date[1], date[2], 0, 0, 0),
+                    # Fecha_Fin=datetime(date[0], date[1], date[2], 23, 59, 59),
+                    Fecha_Inicio=datetime(
+                        random_ais.BaseDateTime.year,
+                        random_ais.BaseDateTime.month,
+                        random_ais.BaseDateTime.day,
+                        0,
+                        0,
+                        0,
+                    ),
+                    Fecha_Fin=datetime(
+                        random_ais.BaseDateTime.year,
+                        random_ais.BaseDateTime.month,
+                        random_ais.BaseDateTime.day,
+                        23,
+                        59,
+                        59,
+                    ),
                     Nombre_Pez_Bandeja=line_split[5],
                     Kg_Bandeja=int(line_split[7][: len(line_split[7]) - 3]),
                 )

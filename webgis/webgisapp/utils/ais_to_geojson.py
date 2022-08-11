@@ -129,6 +129,7 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                         f.properties["Weight"] = 0.0
                     features.append(f)
                 color += 1
+                break
     return FeatureCollection(features)
 
 

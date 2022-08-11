@@ -7,6 +7,7 @@ def relateAISKg(travels, specie=False, name_specie=""):
     if Comprobe_Outdated_Travels(travels):
         Delete_None_Existing_Travels(travels)
     travel_kg = {}
+    i = 0
     for travel in travels:
         ais = travel.AIS_fk
         plate = travel.Plate_fk

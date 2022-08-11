@@ -108,7 +108,6 @@ def calculate_weigths_polygons(
         if x != -1 and y != -1:
             # Sum weight of ais to total in position
             arr_weight[y][x] += travel_kg_dict[travel.id]["Kg"]
-    pprint(arr_weight)
     return arr_weight
 
 

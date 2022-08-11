@@ -78,7 +78,8 @@ def TimeKgAIS(
         plates_used = []
         for ais in AISVessel.objects.all():
             dax = ais.BaseDateTime
-            day = datetime(dax.day, dax.month, dax.year)  # Incorrect save format
+            # day = datetime(dax.day, dax.month, dax.year)  # Incorrect save format
+            day = datetime(dax.year, dax.month, dax.day)  # Incorrect save format
             kgs = 0
             travels = Travel.objects.filter(AIS_fk=ais).exclude(
                 Plate_fk__in=plates_used,
