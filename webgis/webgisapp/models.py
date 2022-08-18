@@ -135,7 +135,7 @@ class Travel(models.Model):
 
 
 class Travel_Fish(models.Model):
-    Travel_fk = models.ForeighKey(Travel, on_delete=models.CASCADE)
+    Travel_fk = models.ForeignKey(Travel, on_delete=models.CASCADE)
     Nombre_Cientifico = models.ForeignKey(
         Fish, on_delete=models.CASCADE, to_field="Nombre_Cientifico"
     )

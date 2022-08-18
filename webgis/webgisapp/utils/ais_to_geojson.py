@@ -54,8 +54,8 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
         if len(AIS_Q) > 0:
             if Heat:
                 travels = Travel.objects.filter(AIS_fk__in=AIS_Q)
-                if Comprobe_Outdated_Travels(travels):
-                    Delete_None_Existing_Travels(travels)
+                # if Comprobe_Outdated_Travels(travels):
+                #     Delete_None_Existing_Travels(travels)
                 travel_dict = relateAISKg(travels)
 
             ais_array = []
@@ -103,7 +103,7 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                                 "LAT": str(AIS.LAT)[0:8],
                                 "COG": AIS.COG,
                                 "SOG": AIS.SOG,
-                                "BaseDateTime": AIS.BaseDateTime,
+                                "BaseDateTime": str(AIS.BaseDateTime),
                                 "CallSign": AIS.CallSign,
                                 "VesselType": AIS.VesselType,
                                 "Length": AIS.Length,

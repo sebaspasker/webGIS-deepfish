@@ -48,7 +48,6 @@ def index(request):
             },
         )
     else:
-        form = SearchIndexForm()
         collection, route, typee = Filter_Type(
             "Heat", Vessel.objects.all(), AISVessel.objects.all()
         )
