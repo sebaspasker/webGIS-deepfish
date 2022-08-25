@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.staticfiles.finders",
     "chartjs",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [

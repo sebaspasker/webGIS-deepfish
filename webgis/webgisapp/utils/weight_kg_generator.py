@@ -1,14 +1,23 @@
 from webgisapp.models import *
 from .join_travel import Comprobe_Outdated_Travels, Delete_None_Existing_Travels
 from .exceptions import *
+import time
+import numpy as np
 
 
 def relateAISKg(travels, specie=False, name_specie=""):
-    if Comprobe_Outdated_Travels(travels):
-        Delete_None_Existing_Travels(travels)
+    start_time = time.time()
+    #if Comprobe_Outdated_Travels(travels):
+    #    Delete_None_Existing_Travels(travels)
+    print("--- %s seconds --- line Comprobe_Outdated_Travels" % (time.time() - start_time))
     travel_kg = {}
     i = 0
-    for travel in travels:
+    
+    travels2 = np.array(travels)
+    print("travels2_len: ", len(travels2))
+    i = 0
+    for travel in travels2:
+        i+=1
         ais = travel.AIS_fk
         plate = travel.Plate_fk
         avg = 0.0
@@ -30,8 +39,13 @@ def relateAISKg(travels, specie=False, name_specie=""):
                 # print(fish_plate)
                 avg += fish_plate.Peso
             avg = avg / len(fish_plates)
-            travel_kg[travel.id] = {"travel": travel, "Kg": avg}
+            travel_kg[travel.id] = {"Kg": avg}
         else:
-            travel_kg[travel.id] = {"travel": travel, "Kg": 0.0}
-
+            travel_kg[travel.id] = {"Kg": 0.0}
+        
+        if i%1000 == 0:
+            print(i)
+            
+    print("travel_kg")
+    print(travel_kg)
     return travel_kg
