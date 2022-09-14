@@ -52,7 +52,8 @@ class AISVessel(models.Model):
 # Añadir timestamp
 class Plate(models.Model):
     # Cambiar que sea el timestamp de la imagen
-    Timestamp = models.DateTimeField(primary_key=True, auto_now_add=True)
+    Id = models.AutoField(primary_key=True)
+    Timestamp = models.DateTimeField(unique=True, auto_now_add=True)
     Lote = models.CharField(
         max_length=15,
         null=False,

@@ -1,10 +1,10 @@
-from datetime import timedelta
 from django.db.models.query import QuerySet
 from .exceptions import *
 from geojson import FeatureCollection, Feature, LineString, Point
 from .join_travel import Delete_None_Existing_Travels, Comprobe_Outdated_Travels
 from random import randrange
 import random
+from datetime import timedelta
 import names
 import string
 from webgisapp.models import AISVessel, Vessel, Travel
@@ -44,15 +44,13 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
 
     features = []
     color = 0
-    #travel_dict = relateAISKg(Travel.objects.all())
-    #with open('/home/nawue/Documents/sebas/deepfish-webgis/webgis/data/data_kg_travels.json', 'w') as fp:
-    #     json.dump(travel_dict, fp)
-    with open("/home/nawue/Documents/sebas/deepfish-webgis/webgis/data/data_kg_travels.json") as f:
+    # travel_dict = relateAISKg(Travel.objects.all())
+    # with open("./data/data_kg_travels.json", "w") as fp:
+    #    json.dump(travel_dict, fp)
+    with open("./data/data_kg_travels.json") as f:
         travel_dict = f.read()
     travel_dict = ast.literal_eval(travel_dict)
 
-    
-    
     for Vessel in Vessels:
         # TODO Temporary code for anonimous data
         vessel_name = names.get_first_name()
@@ -72,8 +70,10 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                 # if Comprobe_Outdated_Travels(travels):
                 #     Delete_None_Existing_Travels(travels)
                 start_time = time.time()
-                #travel_dict = relateAISKg(travels)
-                print("--- %s seconds --- line relateAISKg" % (time.time() - start_time))
+                # travel_dict = relateAISKg(travels)
+                print(
+                    "--- %s seconds --- line relateAISKg" % (time.time() - start_time)
+                )
 
             ais_array = []
             ais_group = []
@@ -95,7 +95,7 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
             ais_array.append(ais_group.copy())
             ais_array2 = np.array(ais_array)
             for ais_g in ais_array2:
-                
+
                 if not Individual:
                     start_time = time.time()
                     f = Feature(
@@ -110,7 +110,10 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                             "Image": Vessel.Image,
                         },
                     )
-                    print("--- %s seconds --- line Individual" % (time.time() - start_time))
+                    print(
+                        "--- %s seconds --- line Individual"
+                        % (time.time() - start_time)
+                    )
                 else:
                     ais_g2 = np.array(ais_g)
                     start_time = time.time()
@@ -139,12 +142,17 @@ def AISQuery_To_Collection(Vessels, AISQuery, Type, Heat=False, Individual=False
                         )
                         if Heat and len(travels) > 0:
                             # TODO esta mal? si
-                            f.properties["Weight"] = travel_dict[str(travels[0].id)]["Kg"]
+                            f.properties["Weight"] = travel_dict[str(travels[0].id)][
+                                "Kg"
+                            ]
                             # f.properties["Weight"] = randrange(0, 30)
                         elif Heat:
                             f.properties["Weight"] = 0.0
                         features.append(f)
-                    print("--- %s seconds --- line AIS (else)" % (time.time() - start_time))
+                    print(
+                        "--- %s seconds --- line AIS (else)"
+                        % (time.time() - start_time)
+                    )
                 # if Heat and len(travels) > 0 and travels[0].id in travel_dict:
                 if not Individual:
                     if Heat and len(travels) > 0:

@@ -15,3 +15,4 @@ class Command(BaseCommand):
         for vessel in Vessel.objects.all():
             vessel.Image = imgs[i % size]
             i += 1
+            vessel.save()

@@ -47,27 +47,29 @@ def Filter_Route(
                     Fecha_Fin__range=(date_from, date_to),
                 )
                 ais_ids = ais.values_list("MMSI", flat=True)
-                vessel = vessel.filter(mmsi__in=ais_ids)
+                vessel = vessel.filter(MMSI__in=ais_ids)
         elif i == 3 and notNull:
             # Busquedad en base a la talla del pez
             lote_ids = Fish_Plate.objects.filter(
-                Lote__in=Plate.objects.filter(Matricula__in=vessel), Talla_cm=talla
-            ).values_list("Lote", flat=True)
-            vessel = vessel.filter(
-                Matricula__in=Plate.objects.filter(Lote__in=lote_ids).values_list(
-                    "Matricula", flat=True
-                )
+                Plate__in=Plate.objects.filter(Matricula__in=vessel),
+                Talla_cm__gt=float(talla),
+                Talla_cm__lt=float(talla) + 1.0,
+            ).values_list("Plate_id", flat=True)
+            plates = Plate.objects.filter(Id__in=lote_ids).values_list(
+                "Matricula", flat=True
             )
+
+            vessel = vessel.filter(Matricula__in=plates)
             ais = ais.filter(MMSI__in=vessel)
         elif i == 4 and notNull:
             # Busquedad en base al nombre comercial del pez
-            fish = Fish.objects.filter(Nombre_Comercial__startswith=pez)
+            fish = Fish.objects.filter(Nombre_Comercial__contains=pez)
             lote_ids = Fish_Plate.objects.filter(
-                Lote__in=Plate.objects.filter(Matricula__in=vessel),
+                Plate__in=Plate.objects.filter(Matricula__in=vessel),
                 Nombre_Cientifico__in=fish,
-            ).values_list("Lote", flat=True)
+            ).values_list("Plate_id", flat=True)
             vessel = vessel.filter(
-                Matricula__in=Plate.objects.filter(Lote__in=lote_ids).values_list(
+                Matricula__in=Plate.objects.filter(Id__in=lote_ids).values_list(
                     "Matricula", flat=True
                 )
             )
