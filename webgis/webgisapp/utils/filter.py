@@ -63,7 +63,7 @@ def Filter_Route(
             ais = ais.filter(MMSI__in=vessel)
         elif i == 4 and notNull:
             # Busquedad en base al nombre comercial del pez
-            fish = Fish.objects.filter(Nombre_Comercial__contains=pez)
+            fish = Fish.objects.filter(Nombre_Cientifico__contains=pez)
             lote_ids = Fish_Plate.objects.filter(
                 Plate__in=Plate.objects.filter(Matricula__in=vessel),
                 Nombre_Cientifico__in=fish,
