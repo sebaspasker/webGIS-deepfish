@@ -8,4 +8,4 @@ if (( $pip_exists == 0 )); then
 	[[ $ans == 'n' ]] && exit
 fi
 
-pip install $(cat dependecies.txt)
+pip install -r dependencies.txt

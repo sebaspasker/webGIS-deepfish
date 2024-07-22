@@ -55,7 +55,8 @@ with open(path + fish_plate_file, "r") as f:
     for line in f:
         line_split = line.split(",")
         route = line_split[0]
-        route = route[: route.index("B")] + "E" + route[route.index("B") + 1 :]
+        route = route[: route.index("B")] + "E"  \ 
+            + route[route.index("B") + 1 :]
 
         bandeja = {
             "size": float(line_split[1]),
